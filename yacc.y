@@ -13,28 +13,42 @@
 
 
 %start program
+
+%token Package
+%token Import
+%token Func
+%token Return
+
+%token Go
+%token Defer
+%token Chan
+%token Select
+
+
+%token Const
+%token Var
+%token Map
+%token Type
+%token Struct
+%token Interface
+
 %token If
 %token Else
+%token Case
+%token Switch
+%token Fallthrough
+
+%token Continue
+%token Break
+
+%token Range
+%token Do
 %token While
-%token Return
-%token Print
-%token Int
+%token For
+
+%token DecInt
 %token Variable
-%token IFX
-%token And
-%token Or
-%token NEquil
-%token Equil
-%token More
-%token Less
-%token MoreEquil
-%token LessEquil
-%left '+' '-'
-%left '*' '/'
-%right '=' '!'
-%left And Or
-%left NEquil Equil
-%left More Less MoreEquil LessEquil
+
 
 %%
 
@@ -42,61 +56,22 @@ program             : default_block
                     | program default_block
                     ;
 
-default_block       : if_block
-                    | loop_block
-                    | return ';'
-                    | print ';'
-                    | assignment ';'
-                    ;
+default_block   :   package_block
+                |   import_block
+                |   func_block
+                |   type_block
+                ;
 
-if_block            : If '(' cond ')' '{' program '}' %prec IFX
-                    | If '(' cond ')' '{' program '}' Else '{' program '}'
-                    ;
+package_block   :   Package Variable
+                ;
 
-loop_block          : While '(' cond ')' '{' program '}'
-                    ;
+import_block    :   Import '"'Variable'"'
+                |   Import '('string_list_block')'
+                ;
 
-cond                : express
-                    | cond And express
-                    | cond Or express
-                    | cond NEquil express
-                    | cond Equil express
-                    | cond More express
-                    | cond Less express
-                    | cond MoreEquil express
-                    | cond LessEquil express
-                    ;
+string_list_block:  '"'Variable'"'
+                |   string_list_block';'
 
-return              : Return
-                    | Return Variable
-                    | Return express
-                    ;
-
-print               : Print '(' Variable ')'
-                    | Print '(' express ')'
-                    ;
-
-assignment          : Variable '=' assignment
-                    | express
-                    | Variable '=' Variable
-                    ;
-
-express             : term
-                    | express '+' term
-                    | express '-' term
-                    ;
-
-term                : factor
-                    | term '*' factor
-                    | term '/' factor
-                    | term '%' factor
-                    ;
-
-factor              : Int
-                    | Variable
-                    | '!' factor
-                    | '(' express ')'
-                    ;
 
 %%
 
