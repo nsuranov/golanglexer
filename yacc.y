@@ -61,8 +61,24 @@ program             : default_block
 
 default_block   :   package_block
                 |   import_block
-                |   func_block
+                |   Func func_block
+                |   type_block
                 ;
+
+type_block      :   Type Variable Struct '{' '}'
+                |   Type Variable Struct '{' struct_fields_list '}'
+                |   Type Variable Interface '{' '}'
+                |   Type Variable Interface '{' int_body '}'
+                ;
+
+struct_fields_list  :   Variable Variable
+                    |   struct_fields_list Variable Variable
+                    ;
+int_body            :   func_head
+                    |   int_body func_head
+                    ;  
+
+            
 
 package_block   :   Package Variable
                 ;
@@ -77,10 +93,14 @@ import_list     : '"' Variable '"'
                 | import_list '"' Variable '"'
                 ;
 
-func_block      :   Func Variable '(' ')' '{' func_body '}'
-                |   Func Variable '(' args ')' '{' func_body '}'
-                |   Func Variable '(' ')' func_return_block '{' func_body '}'
-                |   Func Variable '(' args ')' func_return_block '{' func_body '}'
+func_head       :   Variable '(' ')'
+                |   Variable '(' args ')'
+                |   Variable '(' ')' func_return_block
+                |    Variable '(' args ')' func_return_block
+                ;
+
+func_block      :   func_head '{' func_body '}'
+                |   func_head '{' func_body '}'
                 ;
 
 func_return_block    :   Variable

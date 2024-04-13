@@ -6,8 +6,6 @@ import (
 )
 
 type Person struct {
-	name string
-	age  int
 }
 
 type Runnable interface {

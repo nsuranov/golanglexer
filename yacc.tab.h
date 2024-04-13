@@ -66,7 +66,9 @@
      For = 282,
      DecInt = 283,
      OctInt = 284,
-     Variable = 285
+     BinInt = 285,
+     HexInt = 286,
+     Variable = 287
    };
 #endif
 /* Tokens.  */
@@ -97,7 +99,9 @@
 #define For 282
 #define DecInt 283
 #define OctInt 284
-#define Variable 285
+#define BinInt 285
+#define HexInt 286
+#define Variable 287
 
 
 

@@ -7,6 +7,19 @@ import (
 	"os"
 )
 
+type person struct {
+	name string lmcelmc ckmm
+	name string
+    name string
+
+}
+
+type Runnable interface {
+	run(abs abs) asc
+	run() asc
+	run()
+}
+
 import ("fmt";"os";"fmt";"os")
 
 func main(main uibr) {
