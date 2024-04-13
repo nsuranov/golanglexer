@@ -1,6 +1,18 @@
 import ("fmt";"os")
+
 import "os"
+
 import (
 	"fmt"
 	"os"
-	)
+)
+
+import ("fmt";"os";"fmt";"os")
+
+import ("fmt""os""fmt""os")
+
+
+func main() {
+	fmt.Println("Hello world!")
+	os.CreateTemp("2323", "skdjx")
+}

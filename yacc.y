@@ -58,29 +58,32 @@ program             : default_block
 
 default_block   :   package_block
                 |   import_block
+                |   func_block
                 ;
 
 package_block   :   Package Variable
                 ;
 
-import_block    :   import
-                |   import_block import
+import_block    : Import '"' Variable '"'
+                | Import '(' import_list ')'
+                ;  
+
+
+import_list     : '"' Variable '"'
+                | import_list ';' '"' Variable '"'
+                | import_list '"' Variable '"'
                 ;
 
-import          :   Import import_list ";"
-                |   Import "(" import_list ")" ";"
-;
-
-import_list     :   '"' Variable '"'
-                |   import_list ';' '"' Variable '"'
+func_block      :   Func Variable '(' ')' '{' code_block '}'
                 ;
 
-string_list_block:  '"' Variable '"'
-                |   '"' Variable '"' ';' string_list_block
-                |   '"' Variable '"' '\r' string_list_block
-                |   '"' Variable '"' '\n' string_list_block
-                |   '"' Variable '"' "\r\n" string_list_block
+code_block      :   if_block
+                |   loop_block
+                |   func_call
+                |   return_block
                 ;
+
+
 
 
 %%
