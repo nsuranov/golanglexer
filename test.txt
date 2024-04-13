@@ -9,10 +9,89 @@ import (
 
 import ("fmt";"os";"fmt";"os")
 
-import ("fmt""os""fmt""os")
+func main(main uibr) {
+	fmt.cece.Println(int, a, int, b)
+	fmt.cece.Println(vised, uint)
 
+	fdm.wdwd("ckckkc")
+
+	fmt.cece.Println(vised, "uint")
+	fmt.cece.Println("vised", uint)
+	fmt.cece.Println("vised", uint)
+	fmt.cece.Println("vised", "uint")
+
+	fmt.cece.Println(vised)
+
+	fmt.cece.Println(vised.dcsnc)
+	fmt.cece.Println(vised.dcsnc.Field)
+
+	fmt.cece.Println(Dised)
+	
+	fmt.cece.Println("ncncdin")
+	return 0
+}
+
+func a() int{
+	return 1_22
+}
+
+func b() int, long{
+	if a>=12 && b<2{
+		return -123
+	} else if a{
+		return -0
+	}
+	else{
+		return 12_12_12
+	}
+	return a
+}
 
 func main() {
-	fmt.Println("Hello world!")
-	os.CreateTemp("2323", "skdjx")
+
+    if 7%2 == 0 {
+		return accs
+    } 
+	else {
+		return aed
+    }
+
+    if 8%4 == 0 {
+		return aed
+    }
+
+    if 8%2 == 0 || 7%2 == 0 {
+		return aed
+    }
+
+    if num < 0 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else {
+		return aed
+    }
+
+	if num < 0 {
+		return aed
+    } else if num < 10 {
+		return aed
+    }
+	return aed
 }

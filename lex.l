@@ -39,12 +39,9 @@
 "break"                 return Break;
 
 "range"                 return Range;
-"do"                    return Do;
-"while"                 return While;
 "for"                   return For;
 
-
-([-+]?[1-9][0-9]*|0|[-+]?0)(_?[0-9]+)*      return DecInt;
+[-+]?0|[-+]?[1-9][0-9]*(_?[0-9]+)* return DecInt;
 
 [_a-zA-Z][_a-zA-Z0-9]*  return Variable;
 

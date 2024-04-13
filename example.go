@@ -18,4 +18,8 @@ type Runnable interface {
 func main() {
 	fmt.Println("Hello world!")
 	os.CreateTemp("2323", "skdjx")
+	a := true
+	if a {
+
+	}
 }
