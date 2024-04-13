@@ -45,7 +45,6 @@
 
 ([-+]?[1-9][0-9]*|0|[-+]?0)(_?[0-9]+)*      return DecInt;
 
-[+-]?[1-9]+             return Int;
 [_a-zA-Z][_a-zA-Z0-9]*  return Variable;
 
 [-+*/%=&|!><(){}"'`^:;.,~]      return yytext[0]; 
