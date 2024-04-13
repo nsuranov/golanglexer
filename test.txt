@@ -10,6 +10,24 @@ import (
 import ("fmt";"os";"fmt";"os")
 
 func main(main uibr) {
+
+	a := cmco.fffd(ksocm)
+	a := 12 + 33
+	v := a+v
+	v := "ceec"
+	v := "ceec" + "cocmoecmefoeoef"
+
+	a := 1231 + "cdcddcdc"
+
+	a:= 12
+
+
+	for i{
+		a:=133
+	}
+
+
+
 	fmt.cece.Println(int, a, int, b)
 	fmt.cece.Println(vised, uint)
 
@@ -94,4 +112,33 @@ func main() {
 		return aed
     }
 	return aed
+}
+
+func main() {
+
+    i := 1
+    for i <= 3;j<1 {
+        fmt.Println(i)
+        i = i + 1
+    }
+
+    for j := 0; j < 3; j {
+        fmt.Println(j)
+    }
+
+    for i := range 3 {
+        return a
+    }
+
+    for {
+        fmt.Println("loop")
+        break
+    }
+
+    for n := range 6 {
+        if n%2 == 0 {
+            continue
+        }
+        fmt.Println(n)
+    }
 }

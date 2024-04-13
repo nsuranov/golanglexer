@@ -47,6 +47,9 @@
 %token For
 
 %token DecInt
+%token OctInt
+%token BinInt
+%token HexInt
 %token Variable
 
 
@@ -90,11 +93,14 @@ func_body       :   code_block
 
 code_block      :   inline_call_block
                 |   return_block
+                |   assignment
                 |   if_block
+                |   for_block
+                |   Break
+                |   Continue
                 ;
 
-return_block    :   Return Variable
-                |   Return DecInt
+return_block    :   Return assignment
                 ;
 
 inline_call_block   :       Variable '(' ')'
@@ -132,7 +138,18 @@ if_else_block       :   Else If cond '{' func_body '}'
 
 else_block          :   Else '{' func_body '}'
                     ;
-    
+
+for_block           : For multi_cond '{' func_body '}'
+                    | For '{' func_body '}'
+                    | For cond'{' func_body '}'
+                    ;
+
+multi_cond          :   cond
+                    |   multi_cond';'cond
+                    |   assignment
+                    |   multi_cond';'assignment
+                    ;
+
 
 cond                : express
                     | cond '&''&' express
@@ -145,9 +162,16 @@ cond                : express
                     | cond '<''=' express
                     ;
 
-assignment          : Variable '=' assignment
-                    | express
+assignment          : Variable ':''=' express
+                    | Variable ':''=' assignment
+                    | Variable ':''=' Variable
+                    | Variable ':''=' Range assignment
+                    | Variable ':''=' inline_call_block
+                    | Variable '=' express
+                    | Variable '=' assignment
                     | Variable '=' Variable
+                    | Variable '=' inline_call_block
+                    | express
                     ;
 
 express             : term
@@ -163,6 +187,10 @@ term                : factor
 
 factor              : DecInt
                     | Variable
+                    | OctInt
+                    | HexInt
+                    | BinInt
+                    | string_block
                     | '!' factor
                     | '(' express ')'
                     ;

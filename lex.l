@@ -41,7 +41,11 @@
 "range"                 return Range;
 "for"                   return For;
 
-[-+]?0|[-+]?[1-9][0-9]*(_?[0-9]+)* return DecInt;
+([-+]?0)|([-+]?[1-9][0-9]*(_?[0-9]+)*) return DecInt;
+[+-]?0[oO]?(_?[0-7]+)* return OctInt;
+[+-]?0[bB](_?[01]+)* return BinInt;
+[+-]?0[xX](_?[0-9a-fA-F]+)* return HexInt;
+
 
 [_a-zA-Z][_a-zA-Z0-9]*  return Variable;
 

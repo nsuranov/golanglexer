@@ -65,7 +65,8 @@
      While = 281,
      For = 282,
      DecInt = 283,
-     Variable = 284
+     OctInt = 284,
+     Variable = 285
    };
 #endif
 /* Tokens.  */
@@ -95,7 +96,8 @@
 #define While 281
 #define For 282
 #define DecInt 283
-#define Variable 284
+#define OctInt 284
+#define Variable 285
 
 
 
