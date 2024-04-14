@@ -26,7 +26,7 @@ func main(main uibr) {
 	return 0o9
 
 	defer f("goroutine")
-
+	// mscdkncskcskn
 	messages <- "buffered"
     messages <- "channel"
 

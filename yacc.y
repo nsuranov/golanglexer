@@ -55,6 +55,8 @@
 %token DecFloat
 %token HexFloat
 
+%token Null
+
 %token Variable
 
 
