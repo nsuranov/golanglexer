@@ -2,8 +2,26 @@ package main
 
 import ("fmt";"os")
 
+const n = 500000000
+const d = 3e20 / n
+const s string = "constant"
 
 func main(main uibr) {
+
+	cdsc = 4 - 1
+
+	var arr [3]int
+	var arr [3 + 1]int
+	var arr [skmcsk]int
+	var arr [12 / 3]int
+
+	var arr [3]int= {"mcdmc",0b010101,0x32332,0}
+
+	var arr [...]int= {"mcdmc",0b010101,0x32332,0}
+
+ 	const n = 500000000
+    const d = 3e20 / n
+ 	const s string = "constant"
 
 	return 12
 	return 12.34
@@ -15,12 +33,19 @@ func main(main uibr) {
 	// mscdkncskcskn
 	messages <- "buffered"
     messages <- "channel"
-
+	return smkcdkm
+	messages <- "buffered"
+	switch os := runtime.GOOS; os{
+		case a:=ada:
+			return da
+		case a+b:
+			return net
+	}
+	messages <- "buffered"
         switch t := i.cjndkcj {
-        case 12:{
+        case bool :{
 			return a
-		}
-            
+		}       
         case int:
             fmt.Println("I'm an int")
         default:
@@ -93,10 +118,10 @@ func main(main uibr) {
 		fmt.Println(os)
 	case "linux":
 		{
-			fmt.Println()
-			fmt.Println()
-			fmt.Println()
-			fmt.Println()
+			cddcscd(ecd)
+			cddcscd(ecd)
+			cddcscd(ecd)
+			cddcscd(ecd)
 		}
 	}
 

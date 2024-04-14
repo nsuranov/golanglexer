@@ -4,11 +4,17 @@ import (
 	"fmt"
 )
 
+var f string = "cdcdc"
+
+const ds string = "cece"
+
 func main() {
-	var x int64
 	var y int64 = 10
+
+	y -= 1
+
 	x = 123
-	fmt.Print(x)
+	fmt.Print(f)
 
 	fmt.Print(y)
 }

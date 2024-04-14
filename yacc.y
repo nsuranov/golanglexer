@@ -70,6 +70,7 @@ program             : default_block
                     ;
 
 default_block   :   type_block
+                |   assignment
                 |   Func func_block
                 ;
 
@@ -91,14 +92,14 @@ int_body            :   func_head
 package_block   :   Package Variable
                 ;
 
-import_block    : Import String
+import_block    : Import string_block
                 | Import '(' import_list ')'
                 ;  
 
 
-import_list     : String
-                | import_list ';' String
-                | import_list String
+import_list     : string_block
+                | import_list ';' string_block
+                | import_list string_block
                 ;
 
 func_head       :   Variable '(' ')'
@@ -108,7 +109,6 @@ func_head       :   Variable '(' ')'
                 ;
 
 func_block      :   func_head '{' func_body '}'
-                |   func_head '{' func_body '}'
                 ;
 
 func_return_block    :   Variable
@@ -185,6 +185,10 @@ switch_body     :   case_block
                 |   switch_body case_block
                 ;
 
+switch_code_multiblock  :   switch_code_block
+                        |   switch_code_multiblock switch_code_block
+                        ;   
+
 switch_code_block       :   inline_call_block
                         |   return_block
                         |   assignment
@@ -196,11 +200,12 @@ switch_code_block       :   inline_call_block
                         |   case_block
                         ;
 
-case_block              :   Case multi_cond ':' '{' func_body '}'
-                        |   Case multi_cond ':' code_block case_block
-                        |   Case multi_cond ':' code_block
-                        |   Default ':' '{' func_body '}'
-                        |   Default ':' code_block
+case_block              :   Case Variable ':' switch_code_block 
+                        |   Case Variable ':' '{' switch_code_multiblock '}'
+                        |   Case multi_cond ':' switch_code_block 
+                        |   Case multi_cond ':' '{' switch_code_multiblock '}'
+                        |   Default ':' '{' switch_code_multiblock '}'
+                        |   Default ':' switch_code_block
                         ;
 
 anon_func_block         :   Func '(' args ')' '{' func_body '}' '(' variable_list ')'
@@ -219,17 +224,15 @@ select_block        : Select '{' switch_body '}'
                     ;
 
 multi_cond          :   cond
-                    |   assignment
-                    |   express
-                    |   Variable
                     |   multi_cond ';' cond
-                    |   multi_cond ';' assignment
                     |   multi_cond ',' cond
-                    |   multi_cond ',' assignment
+                    |   auto_type_assignment
                     ;
 
 
 cond                : express
+                    | inline_call_block
+                    | cond '<''-' express
                     | cond '&''&' express
                     | cond '|''|' express
                     | cond '!''=' express
@@ -241,43 +244,67 @@ cond                : express
                     ;
 
 
+assignment          : auto_type_assignment
+                    | Variable '<''-' factor
+                    | Variable '=' express
+                    | Variable '=' inline_call_block
+                    | Var Variable Variable
+                    | Var Variable Variable '=' express
+                    | Var Variable Variable '=' object_field
+                    | Var Variable Variable '=' inline_call_block
+                    | Var Variable Variable '=''<''-' Variable
+                    | Const Variable Variable '=' express
+                    | Const Variable Variable '=' object_field
+                    | Const Variable Variable '=' inline_call_block
+                    | Const Variable '=' express
+                    | Const Variable '=' object_field
+                    | Const Variable '=' inline_call_block
+                    | Var Variable array_index Variable
+                    | Var Variable array_index Variable '=' array_assignment
+                    | Var Variable array_index Variable '=' object_field
+                    | Var Variable array_index Variable '=' inline_call_block
+                    ;
+
+array_index         :   '[' express ']'
+                    |   '[' '.''.''.' ']'
+                    |   '[' ']'
+                    ;
+
+array_assignment    :   '{' factor_list '}'
+
+factor_list         :   value   
+                    |   factor_list','value
+                    ;
+                    
+auto_type_assignment:Variable ':''=' express
+                    |Variable ':''=' object_field
+                    | Variable ':''=' Range express
+                    | Variable ':''=' inline_call_block
+                    | Variable ':''=''<''-' Variable
+                    ;
+
+express             : term
+                    | express '+' term
+                    | express '-' term
+                    | express '*' term
+                    | express '/' term
+                    | express '%' term
+                    ;
+
+term                : factor
+                    ;
+
 object_field        : Variable
                     | Variable '.' object_field
                     ;
 
 
-assignment          : Variable ':''=' express
-                    | Variable ':''=' object_field
-                    | Variable ':''=' Variable
-                    | Variable ':''=' Range express
-                    | Variable ':''=' inline_call_block
-                    | Variable ':''=''<''-' Variable
-                    | Variable '<''-' factor
-                    | Variable '=' express
-                    | Variable '=' Variable
-                    | Variable '=' inline_call_block
-                    | Var Variable Variable
-                    | Var Variable Variable '=' express
-                    | Var Variable Variable '=' object_field
-                    | Var Variable Variable '=' Variable
-                    | Var Variable Variable '=' inline_call_block
-                    | Var Variable Variable '=''<''-' Variable
-                    
-
-
-express             : term
-                    | express '+' term
-                    | express '-' term
+factor              : value
+                    | '!' factor
+                    | '(' express ')'
                     ;
 
-term                : factor
-                    | term '*' factor
-                    | term '/' factor
-                    | term '%' factor
-                    ;
-
-factor              : DecInt
-                    | Variable
+value               : DecInt
                     | OctInt
                     | HexInt
                     | BinInt
@@ -285,8 +312,6 @@ factor              : DecInt
                     | HexFloat
                     | string_block
                     | object_field
-                    | '!' factor
-                    | '(' express ')'
                     ;
 %%
 
