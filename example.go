@@ -2,29 +2,24 @@ package main
 
 import (
 	"fmt"
-	"os"
+	"runtime"
 )
 
-type Person struct {
-}
-
-type Runnable interface {
-	run() string
-	walk()
-}
-
 func main() {
-	fmt.Println("Hello world!")
-	os.CreateTemp("2323", "skdjx")
-	a := true
-	if a {
+	fmt.Print("Go runs on ")
 
+	type Person struct {
+		age uint
 	}
-	fmt.Println(z())
 
-}
-
-
-func z() bool {
-	return a:=true
+	switch os := runtime.GOOS; os {
+	case "darwin":
+		fmt.Println("OS X.")
+	case "linux":
+		fmt.Println("Linux.")
+	default:
+		// freebsd, openbsd,
+		// plan9, windows...
+		fmt.Printf("%s.\n", os)
+	}
 }

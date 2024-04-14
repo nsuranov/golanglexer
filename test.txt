@@ -25,7 +25,28 @@ func main(main uibr) {
 	return 12.21_1_33
 	return 0o9
 
+	go f("goroutine")
 
+
+    go func(csc ec) {
+        fmt.Println()
+    }()
+
+
+
+	switch os {
+	case "darwin":
+		fmt.Println()
+	default:
+		fmt.Println(os)
+	case "linux":
+		{
+			fmt.Println()
+			fmt.Println()
+			fmt.Println()
+			fmt.Println()
+		}
+	}
 
 	a := cmco.fffd(ksocm)
 	a := 12 + 33

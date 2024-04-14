@@ -36,6 +36,7 @@
 %token Else
 %token Case
 %token Switch
+%token Default
 %token Fallthrough
 
 %token Continue
@@ -123,6 +124,8 @@ code_block      :   inline_call_block
                 |   for_block
                 |   Break
                 |   Continue
+                |   switch_block
+                |   gorutine_block
                 ;
 
 return_block    :   Return assignment
@@ -170,9 +173,9 @@ for_block           : For multi_cond '{' func_body '}'
                     ;
 
 multi_cond          :   cond
-                    |   multi_cond';'cond
                     |   assignment
-                    |   multi_cond';'assignment
+                    |   multi_cond ';' cond
+                    |   multi_cond ';' assignment
                     ;
 
 
@@ -189,6 +192,7 @@ cond                : express
 
 assignment          : Variable ':''=' express
                     | Variable ':''=' assignment
+                    | Variable ':''=' object_field
                     | Variable ':''=' Variable
                     | Variable ':''=' Range assignment
                     | Variable ':''=' inline_call_block
@@ -198,6 +202,11 @@ assignment          : Variable ':''=' express
                     | Variable '=' inline_call_block
                     | express
                     ;
+
+object_field        : Variable
+                    | Variable '.' object_field
+                    ;
+
 
 express             : term
                     | express '+' term
@@ -218,10 +227,42 @@ factor              : DecInt
                     | DecFloat
                     | HexFloat
                     | string_block
+                    | object_field
                     | '!' factor
                     | '(' express ')'
                     ;
 
+switch_block        : Switch multi_cond '{' switch_body '}'
+                    | Switch cond'{' switch_body '}'
+                    ;
+switch_body     :   switch_code_block
+                |   switch_body switch_code_block
+                ;
+
+switch_code_block       :   inline_call_block
+                        |   return_block
+                        |   assignment
+                        |   if_block
+                        |   for_block
+                        |   Break
+                        |   Continue
+                        |   switch_block
+                        |   case_block
+                        ;
+
+case_block              :   Case assignment ':' '{' func_body '}'
+                        |   Case assignment ':' code_block case_block
+                        |   Default ':' '{' func_body '}'
+                        |   Default ':' code_block
+                        ;
+
+anon_func_block         :   Func '(' args ')' '{' func_body '}' '(' variable_list ')'
+                        |   Func '('  ')' '{' func_body '}' '(' ')'
+                        ;
+
+gorutine_block          :   Go inline_call_block
+                        |   Go anon_func_block
+                        ;
 %%
 
 

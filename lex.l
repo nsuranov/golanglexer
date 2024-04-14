@@ -33,6 +33,7 @@
 "else"                  return Else;
 "case"                  return Case;
 "switch"                return Switch;
+"default"               return Default;
 "fallthrough"           return Fallthrough;
 
 "continue"              return Continue;
