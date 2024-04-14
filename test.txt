@@ -9,12 +9,42 @@ func main(main uibr) {
 	return 12.34
 	return 12_12_3
 	return 12.21_1_33
-	return 0o9
+	return 0o7
 
 	defer f("goroutine")
 	// mscdkncskcskn
 	messages <- "buffered"
     messages <- "channel"
+
+        switch t := i.cjndkcj {
+        case 12:{
+			return a
+		}
+            
+        case int:
+            fmt.Println("I'm an int")
+        default:
+            fmt.Printf("Don't know type %T\n", t)
+        }
+
+		    switch i {
+    case 1:
+        fmt.Println("one")
+    case 2:
+        fmt.Println("two")
+    case 3:
+        fmt.Println("three")
+    }
+
+	    switch {
+    case t.Hour() < 12:
+        fmt.Println("It's before noon")
+    default:
+        fmt.Println("It's after noon")
+    }
+
+
+
 
 	select 
 	{
@@ -172,7 +202,7 @@ func main() {
     }
 	return aed
 }
-
+/*
 func main() {
 
     i := 1
@@ -208,3 +238,4 @@ func main() {
     var x int
 }
 
+*/

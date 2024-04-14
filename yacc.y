@@ -73,9 +73,6 @@ default_block   :   type_block
                 |   Func func_block
                 ;
 
-multiline_comment:  '/' '*'  '*''/'   
-                ;
-
 type_block      :   Type Variable Struct '{' '}'
                 |   Type Variable Struct '{' struct_fields_list '}'
                 |   Type Variable Interface '{' '}'
@@ -179,10 +176,56 @@ for_block           : For multi_cond '{' func_body '}'
                     | For cond'{' func_body '}'
                     ;
 
+
+switch_block        : Switch multi_cond '{' switch_body '}'
+                    | Switch cond'{' switch_body '}'
+                    | Switch '{' switch_body '}'
+                    ;
+switch_body     :   case_block
+                |   switch_body case_block
+                ;
+
+switch_code_block       :   inline_call_block
+                        |   return_block
+                        |   assignment
+                        |   if_block
+                        |   for_block
+                        |   Break
+                        |   Continue
+                        |   switch_block
+                        |   case_block
+                        ;
+
+case_block              :   Case multi_cond ':' '{' func_body '}'
+                        |   Case multi_cond ':' code_block case_block
+                        |   Case multi_cond ':' code_block
+                        |   Default ':' '{' func_body '}'
+                        |   Default ':' code_block
+                        ;
+
+anon_func_block         :   Func '(' args ')' '{' func_body '}' '(' variable_list ')'
+                        |   Func '('  ')' '{' func_body '}' '(' ')'
+                        ;
+
+gorutine_block          :   Go inline_call_block
+                        |   Go anon_func_block
+                        ;
+
+defer_block             :   Defer inline_call_block
+                        |   Defer anon_func_block
+                        ;
+
+select_block        : Select '{' switch_body '}'
+                    ;
+
 multi_cond          :   cond
                     |   assignment
+                    |   express
+                    |   Variable
                     |   multi_cond ';' cond
                     |   multi_cond ';' assignment
+                    |   multi_cond ',' cond
+                    |   multi_cond ',' assignment
                     ;
 
 
@@ -245,47 +288,6 @@ factor              : DecInt
                     | '!' factor
                     | '(' express ')'
                     ;
-
-switch_block        : Switch multi_cond '{' switch_body '}'
-                    | Switch cond'{' switch_body '}'
-                    ;
-switch_body     :   case_block
-                |   switch_body case_block
-                ;
-
-switch_code_block       :   inline_call_block
-                        |   return_block
-                        |   assignment
-                        |   if_block
-                        |   for_block
-                        |   Break
-                        |   Continue
-                        |   switch_block
-                        |   case_block
-                        ;
-
-case_block              :   Case assignment ':' '{' func_body '}'
-                        |   Case assignment ':' code_block case_block
-                        |   Case assignment ':' code_block
-                        |   Default ':' '{' func_body '}'
-                        |   Default ':' code_block
-                        ;
-
-anon_func_block         :   Func '(' args ')' '{' func_body '}' '(' variable_list ')'
-                        |   Func '('  ')' '{' func_body '}' '(' ')'
-                        ;
-
-gorutine_block          :   Go inline_call_block
-                        |   Go anon_func_block
-                        ;
-
-defer_block             :   Defer inline_call_block
-                        |   Defer anon_func_block
-                        ;
-
-select_block        : Select '{' switch_body '}'
-                    ;
-
 %%
 
 int main(){
