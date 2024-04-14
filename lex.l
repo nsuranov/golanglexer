@@ -25,6 +25,7 @@
 "const"                 return Const;
 "var"                   return Var;
 "map"                   return Map;
+
 "type"                  return Type;
 "struct"                return Struct;
 "interface"             return Interface;

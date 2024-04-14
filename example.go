@@ -2,24 +2,29 @@ package main
 
 import (
 	"fmt"
-	"runtime"
+	"time"
 )
 
 func main() {
-	fmt.Print("Go runs on ")
 
-	type Person struct {
-		age uint
-	}
+	c1 := make(chan string)
+	c2 := make(chan string)
 
-	switch os := runtime.GOOS; os {
-	case "darwin":
-		fmt.Println("OS X.")
-	case "linux":
-		fmt.Println("Linux.")
-	default:
-		// freebsd, openbsd,
-		// plan9, windows...
-		fmt.Printf("%s.\n", os)
+	go func() {
+		time.Sleep(1 * time.Second)
+		c1 <- "one"
+	}()
+	go func() {
+		time.Sleep(2 * time.Second)
+		c2 <- "two"
+	}()
+
+	for i := 0; i < 2; i++ {
+		select {
+		case msg1 := <-c1:
+			fmt.Println("received", msg1)
+		case msg2 := <-c2:
+			fmt.Println("received", msg2)
+		}
 	}
 }

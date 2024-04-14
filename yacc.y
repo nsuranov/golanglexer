@@ -71,6 +71,9 @@ default_block   :   type_block
                 |   Func func_block
                 ;
 
+multiline_comment:  '/' '*'  '*''/'   
+                ;
+
 type_block      :   Type Variable Struct '{' '}'
                 |   Type Variable Struct '{' struct_fields_list '}'
                 |   Type Variable Interface '{' '}'
@@ -126,6 +129,8 @@ code_block      :   inline_call_block
                 |   Continue
                 |   switch_block
                 |   gorutine_block
+                |   defer_block
+                |   select_block
                 ;
 
 return_block    :   Return assignment
@@ -196,6 +201,8 @@ assignment          : Variable ':''=' express
                     | Variable ':''=' Variable
                     | Variable ':''=' Range assignment
                     | Variable ':''=' inline_call_block
+                    | Variable '<''-' factor
+                    | Variable '-''>' factor
                     | Variable '=' express
                     | Variable '=' assignment
                     | Variable '=' Variable
@@ -235,8 +242,8 @@ factor              : DecInt
 switch_block        : Switch multi_cond '{' switch_body '}'
                     | Switch cond'{' switch_body '}'
                     ;
-switch_body     :   switch_code_block
-                |   switch_body switch_code_block
+switch_body     :   case_block
+                |   switch_body case_block
                 ;
 
 switch_code_block       :   inline_call_block
@@ -252,6 +259,7 @@ switch_code_block       :   inline_call_block
 
 case_block              :   Case assignment ':' '{' func_body '}'
                         |   Case assignment ':' code_block case_block
+                        |   Case assignment ':' code_block
                         |   Default ':' '{' func_body '}'
                         |   Default ':' code_block
                         ;
@@ -263,9 +271,15 @@ anon_func_block         :   Func '(' args ')' '{' func_body '}' '(' variable_lis
 gorutine_block          :   Go inline_call_block
                         |   Go anon_func_block
                         ;
+
+defer_block             :   Defer inline_call_block
+                        |   Defer anon_func_block
+                        ;
+
+select_block        : Select '{' switch_body '}'
+                    ;
+
 %%
-
-
 
 int main(){
     yyparse();
