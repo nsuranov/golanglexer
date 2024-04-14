@@ -12,7 +12,7 @@
 %}
 
 
-%start program
+%start program_struct
 
 %token Package
 %token Import
@@ -50,19 +50,24 @@
 %token OctInt
 %token BinInt
 %token HexInt
+
+%token DecFloat
+%token HexFloat
+
 %token Variable
 
 
 %%
 
+program_struct      :   package_block import_block program 
+                    ;
+
 program             : default_block
                     | program default_block
                     ;
 
-default_block   :   package_block
-                |   import_block
+default_block   :   type_block
                 |   Func func_block
-                |   type_block
                 ;
 
 type_block      :   Type Variable Struct '{' '}'
@@ -210,6 +215,8 @@ factor              : DecInt
                     | OctInt
                     | HexInt
                     | BinInt
+                    | DecFloat
+                    | HexFloat
                     | string_block
                     | '!' factor
                     | '(' express ')'

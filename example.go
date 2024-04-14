@@ -20,4 +20,11 @@ func main() {
 	if a {
 
 	}
+	fmt.Println(z())
+
+}
+
+
+func z() bool {
+	return a:=true
 }
