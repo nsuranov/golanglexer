@@ -33,7 +33,7 @@ func main(main uibr) {
 	select 
 	{
         case msg1 <-c1:
-            fmt.Println("received", msg1)
+            fmt.Println("received zalupz \n mxkmdckm", msg1)
         case msg2 <-c2:
             fmt.Println("received", msg2)
         }
@@ -186,12 +186,12 @@ func main() {
     }
 	return aed
 }
-/*
+
 func main() {
 
     i := 1
     for i % 3 {
-        fmt.Println(i)
+        fmt.Println("Test of new linews!")
         i = i + 1
     }
 
@@ -215,4 +215,3 @@ func main() {
         fmt.Println(n)
     }
 }
-*/

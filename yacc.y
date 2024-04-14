@@ -55,7 +55,7 @@
 %token DecFloat
 %token HexFloat
 
-%token Null
+%token String
 
 %token Variable
 
@@ -94,14 +94,14 @@ int_body            :   func_head
 package_block   :   Package Variable
                 ;
 
-import_block    : Import '"' Variable '"'
+import_block    : Import String
                 | Import '(' import_list ')'
                 ;  
 
 
-import_list     : '"' Variable '"'
-                | import_list ';' '"' Variable '"'
-                | import_list '"' Variable '"'
+import_list     : String
+                | import_list ';' String
+                | import_list String
                 ;
 
 func_head       :   Variable '(' ')'
@@ -158,7 +158,7 @@ variable_list       :   Variable
                     |   variable_list ',' string_block
                     ;
 
-string_block        :   '"' Variable '"'
+string_block        :   String
                     ;
 
 if_block            : If cond '{' func_body '}'
