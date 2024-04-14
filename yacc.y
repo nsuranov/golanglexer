@@ -135,7 +135,7 @@ code_block      :   inline_call_block
                 |   select_block
                 ;
 
-return_block    :   Return assignment
+return_block    :   Return express 
                 ;
 
 inline_call_block   :       Variable '(' ')'
@@ -197,24 +197,29 @@ cond                : express
                     | cond '<''=' express
                     ;
 
-assignment          : Variable ':''=' express
-                    | Variable ':''=' assignment
-                    | Variable ':''=' object_field
-                    | Variable ':''=' Variable
-                    | Variable ':''=' Range assignment
-                    | Variable ':''=' inline_call_block
-                    | Variable '<''-' factor
-                    | Variable '-''>' factor
-                    | Variable '=' express
-                    | Variable '=' assignment
-                    | Variable '=' Variable
-                    | Variable '=' inline_call_block
-                    | express
-                    ;
 
 object_field        : Variable
                     | Variable '.' object_field
                     ;
+
+
+assignment          : Variable ':''=' express
+                    | Variable ':''=' object_field
+                    | Variable ':''=' Variable
+                    | Variable ':''=' Range express
+                    | Variable ':''=' inline_call_block
+                    | Variable ':''=''<''-' Variable
+                    | Variable '<''-' factor
+                    | Variable '=' express
+                    | Variable '=' Variable
+                    | Variable '=' inline_call_block
+                    | Var Variable Variable
+                    | Var Variable Variable '=' express
+                    | Var Variable Variable '=' object_field
+                    | Var Variable Variable '=' Variable
+                    | Var Variable Variable '=' inline_call_block
+                    | Var Variable Variable '=''<''-' Variable
+                    
 
 
 express             : term
