@@ -5,10 +5,10 @@ import (
 )
 
 func main() {
-	var x int64
+	x := false
 	var y int64 = 10
-	x = 123
+	y -= 123
+	x = !x
 	fmt.Print(x)
-
 	fmt.Print(y)
 }

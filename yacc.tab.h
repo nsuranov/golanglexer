@@ -71,8 +71,27 @@
      HexInt = 287,
      DecFloat = 288,
      HexFloat = 289,
-     Null = 290,
-     Variable = 291
+     String = 290,
+     Variable = 291,
+     Plus = 292,
+     Equals = 293,
+     Colon = 294,
+     Minus = 295,
+     Times = 296,
+     Devides = 297,
+     Mod = 298,
+     And = 299,
+     Or = 300,
+     Xor = 301,
+     Not = 302,
+     OpenBracket = 303,
+     ClosingBracket = 304,
+     OpenCurlyBracket = 305,
+     ClosingCurlyBracket = 306,
+     OpenSquareBracket = 307,
+     ClosingSquareBracket = 308,
+     ChannelArrow = 309,
+     UNARY = 310
    };
 #endif
 /* Tokens.  */
@@ -108,8 +127,27 @@
 #define HexInt 287
 #define DecFloat 288
 #define HexFloat 289
-#define Null 290
+#define String 290
 #define Variable 291
+#define Plus 292
+#define Equals 293
+#define Colon 294
+#define Minus 295
+#define Times 296
+#define Devides 297
+#define Mod 298
+#define And 299
+#define Or 300
+#define Xor 301
+#define Not 302
+#define OpenBracket 303
+#define ClosingBracket 304
+#define OpenCurlyBracket 305
+#define ClosingCurlyBracket 306
+#define OpenSquareBracket 307
+#define ClosingSquareBracket 308
+#define ChannelArrow 309
+#define UNARY 310
 
 
 

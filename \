@@ -62,20 +62,6 @@
 %token Minus
 %token Times
 %token Devides
-%token Mod
-%token And
-%token Or 
-%token Xor
-%token Not 
-
-%token OpenBracket
-%token ClosingBracket
-%token OpenCurlyBracket
-%token ClosingCurlyBracket
-%token OpenSquareBracket
-%token ClosingSquareBracket
-%token ChannelArrow
-
 
 %left Plus Minus Times Devides
 %right UNARY
@@ -96,10 +82,10 @@ default_block       : type_block
                     ;
 
 
-type_block          : Type Variable Struct OpenCurlyBracket ClosingCurlyBracket
-                    | Type Variable Struct OpenCurlyBracket struct_fields_list ClosingCurlyBracket
-                    | Type Variable Interface OpenCurlyBracket ClosingCurlyBracket
-                    | Type Variable Interface OpenCurlyBracket int_body ClosingCurlyBracket
+type_block          : Type Variable Struct '{' '}'
+                    | Type Variable Struct '{' struct_fields_list '}'
+                    | Type Variable Interface '{' '}'
+                    | Type Variable Interface '{' int_body '}'
                     ;
 
 
@@ -116,7 +102,7 @@ package_block       : Package Variable
 
 
 import_block        : Import factor
-                    | Import OpenBracket import_list ClosingBracket
+                    | Import '(' import_list ')'
                     ;  
 
 
@@ -126,15 +112,15 @@ import_list         : factor
                     ;
 
 
-func_head           : Variable OpenBracket ClosingBracket
-                    | Variable OpenBracket args ClosingBracket
-                    | Variable OpenBracket ClosingBracket func_return_block
-                    | Variable OpenBracket args ClosingBracket func_return_block
+func_head           : Variable '(' ')'
+                    | Variable '(' args ')'
+                    | Variable '(' ')' func_return_block
+                    | Variable '(' args ')' func_return_block
                     ;
 
 
-func_block          : func_head OpenCurlyBracket func_body ClosingCurlyBracket
-                    | func_head OpenCurlyBracket func_body ClosingCurlyBracket
+func_block          : func_head '{' func_body '}'
+                    | func_head '{' func_body '}'
                     ;
 
 
@@ -166,8 +152,8 @@ return_block        : Return expression
                     ;
 
 
-inline_call_block   : Variable OpenBracket ClosingBracket
-                    | Variable OpenBracket variable_list ClosingBracket
+inline_call_block   : Variable '(' ')'
+                    | Variable '(' variable_list ')'
                     | Variable '.' inline_call_block
                     ;
 
@@ -189,34 +175,34 @@ variable_list       : Variable
                     ;
 
 
-if_block            : If cond OpenCurlyBracket func_body ClosingCurlyBracket
-                    | If cond OpenCurlyBracket func_body ClosingCurlyBracket else_block
-                    | If cond OpenCurlyBracket func_body ClosingCurlyBracket if_else_block
-                    | If cond OpenCurlyBracket func_body ClosingCurlyBracket if_else_block else_block
+if_block            : If cond '{' func_body '}'
+                    | If cond '{' func_body '}' else_block
+                    | If cond '{' func_body '}' if_else_block
+                    | If cond '{' func_body '}' if_else_block else_block
                     ;
 
 
-if_else_block       : Else If cond OpenCurlyBracket func_body ClosingCurlyBracket
-                    | if_else_block Else If cond OpenCurlyBracket func_body ClosingCurlyBracket
+if_else_block       : Else If cond '{' func_body '}'
+                    | if_else_block Else If cond '{' func_body '}'
                     ;
 
 
-else_block          : Else OpenCurlyBracket func_body ClosingCurlyBracket
+else_block          : Else '{' func_body '}'
                     ;
 
 
-for_block           : For cond OpenCurlyBracket func_body ClosingCurlyBracket
-                    | For OpenCurlyBracket func_body ClosingCurlyBracket
-                    | For cond OpenCurlyBracket func_body ClosingCurlyBracket
+for_block           : For cond '{' func_body '}'
+                    | For '{' func_body '}'
+                    | For cond'{' func_body '}'
                     ;
 
 
 cond                : Variable
                     | expression
                     | assignment 
-                    | cond And And expression
-                    | cond Or Or expression
-                    | cond Not Equals expression
+                    | cond '&''&' expression
+                    | cond '|''|' expression
+                    | cond '!' Equals expression
                     | cond Equals Equals expression
                     | cond '>' expression
                     | cond '<' expression
@@ -230,8 +216,8 @@ assignment          : Variable Colon Equals expression
                     | Variable Colon Equals object_field
                     | Variable Colon Equals Range expression
                     | Variable Colon Equals inline_call_block
-                    | Variable Colon Equals ChannelArrow Variable
-                    | Variable ChannelArrow factor
+                    | Variable Colon Equals '<''-' Variable
+                    | Variable '<''-' factor
                     | Variable Equals expression
                     | Variable Equals object_field
                     | Variable Equals inline_call_block
@@ -239,9 +225,7 @@ assignment          : Variable Colon Equals expression
                     | Var Variable Variable Equals expression
                     | Var Variable Variable Equals object_field
                     | Var Variable Variable Equals inline_call_block
-                    | Var Variable Variable Equals ChannelArrow Variable
-                    | Variable Plus Plus
-                    | Variable Minus Minus
+                    | Var Variable Variable Equals '<''-' Variable
                     ;
 
 
@@ -250,11 +234,9 @@ expression          : factor
                     | expression Minus expression
                     | expression Times expression
                     | expression Devides expression
-                    | expression Mod expression
-                    | expression And expression
-                    | expression Or expression
-                    | expression Xor expression
-                    | OpenBracket expression ClosingBracket
+                    | '(' expression ')'
+                    | Variable Plus Plus
+                    | Variable Minus Minus
                     ;
 
 
@@ -278,7 +260,7 @@ factor              : object_field
                     | Minus DecFloat %prec UNARY
                     | Minus HexFloat %prec UNARY
                     | String
-                    | Not factor
+                    | '!' factor
                     ;
 
 
@@ -287,8 +269,8 @@ object_field        : Variable
                     ;
 
 
-switch_block        : Switch cond OpenCurlyBracket switch_body ClosingCurlyBracket
-                    | Switch cond OpenCurlyBracket switch_body ClosingCurlyBracket
+switch_block        : Switch cond '{' switch_body '}'
+                    | Switch cond '{' switch_body '}'
                     ;
 
 
@@ -307,15 +289,15 @@ switch_code_block   : inline_call_block
                     | case_block
                     ;
 
-case_block          : Case cond Colon OpenCurlyBracket func_body ClosingCurlyBracket
+case_block          : Case cond Colon '{' func_body '}'
                     | Case cond Colon switch_code_block case_block
                     | Case cond Colon switch_code_block
-                    | Default Colon OpenCurlyBracket func_body ClosingCurlyBracket
+                    | Default Colon '{' func_body '}'
                     | Default Colon switch_code_block
                     ;
 
-anon_func_block     : Func OpenBracket args ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket variable_list ClosingBracket
-                    | Func OpenBracket  ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket ClosingBracket
+anon_func_block     : Func '(' args ')' '{' func_body '}' '(' variable_list ')'
+                    | Func '('  ')' '{' func_body '}' '(' ')'
                     ;
 
 gorutine_block      : Go inline_call_block
@@ -326,7 +308,7 @@ defer_block         : Defer inline_call_block
                     | Defer anon_func_block
                     ;
 
-select_block        : Select OpenCurlyBracket switch_body ClosingCurlyBracket
+select_block        : Select '{' switch_body '}'
                     ;
 
 %%
