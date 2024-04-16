@@ -1,18 +1,58 @@
 package main
 
 import ("fmt";"os")
-/*
+
 const n = 500000000
 const d = 3e20 / n
 const s string = "constant"
-*/
-/*
 
+
+func main() {
+
+    i := 1
+    for i <= 3 {
+        fmt.Println(i)
+        i = i + 1
+    }
+
+    for k++{
+        fmt.Println(i)
+        i = i + 1
+    }
+
+    for k:=11{
+        fmt.Println(i)
+        i = i + 1
+    }
+
+    for j := 0; j < 3; j++ {
+        fmt.Println(j)
+    }
+
+    for i := range 3 {
+        fmt.Println("range", i)
+    }
+
+    for {
+        fmt.Println("loop")
+        break
+    }
+
+    for n := range 6 {
+        if n%2 == 0 {
+            continue
+        }
+        fmt.Println(n)
+    }
+}
 func main(main uibr) {
+
+
+
 
     if x + 123 < 100 || x > 1 && x || bebra {
         return 0
-
+    }
 	m := make(map[string]int)
 
 	m["k1"] = 7
@@ -42,7 +82,8 @@ func main(main uibr) {
 	fmt.Println("map:", n)
 
 	n2 := map[string]int{"foo": 1, "bar": 2}
-	if maps.Equal(n, n2) {
+    
+	if maps.Equal(n, dawd.acasc.cac(mncnc.scvmvm.dclmc.mvmv.vcmvm(mcmc(mcmc)))) {
 		fmt.Println("n == n2")
 	}
 
@@ -100,7 +141,7 @@ func main(main uibr) {
         fmt.Println("three")
     }
 
-	    switch {
+	switch {
     case t.Hour() < 12:
         fmt.Println("It's before noon")
     default:
@@ -112,11 +153,11 @@ func main(main uibr) {
 
 	select 
 	{
-        case msg1 <-c1:
+        case msg1 <- c1:
             fmt.Println("received zalupz \n mxkmdckm", msg1)
-        case msg2 <-c2:
+        case msg2 <- c2:
             fmt.Println("received", msg2)
-        }
+    }
 
 
     switch i {
@@ -165,19 +206,17 @@ func main(main uibr) {
 	}
 
 	a := cmco.fffd(ksocm)
-	a := 12 + 33
+    
+	a := 12+33
+
 	v := a+v
+
 	v := "ceec"
 	v := "ceec" + "cocmoecmefoeoef"
 
 	a := 1231 + "cdcddcdc"
 
 	a:= 12
-
-
-	for i{
-		a:=133
-	}
 
 
 
@@ -199,8 +238,10 @@ func main(main uibr) {
 	fmt.cece.Println(Dised)
 	
 	fmt.cece.Println("ncncdin")
-	return 0
+	return acsa
 }
+
+
 
 func a() int{
 	return 1_22
@@ -266,7 +307,6 @@ func main() {
     }
 }
 
-*/
 /*
 func main() {
 

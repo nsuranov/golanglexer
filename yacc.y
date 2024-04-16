@@ -199,12 +199,6 @@ arg                 : Variable Variable
                     ;
 
 
-variable_list       : factor
-                    | Variable '.' variable_list
-                    | variable_list ',' factor
-                    ;
-
-
 if_block            : If condition OpenCurlyBracket func_body ClosingCurlyBracket %prec IFX
                     | If condition OpenCurlyBracket func_body ClosingCurlyBracket else_block
                     | If condition OpenCurlyBracket func_body ClosingCurlyBracket if_else_block
@@ -222,6 +216,7 @@ else_block          : Else OpenCurlyBracket func_body ClosingCurlyBracket
 
 
 for_block           : For condition OpenCurlyBracket func_body ClosingCurlyBracket
+                    | For multi_switch_condition_body OpenCurlyBracket func_body ClosingCurlyBracket
                     | For OpenCurlyBracket func_body ClosingCurlyBracket
                     ;
 
@@ -307,16 +302,21 @@ cond                : express
                     | cond Less Equals express
                     ;
 
+channel_assignment: Variable ChannelArrow factor
+                  | Variable ChannelArrow express
+                  | Var Variable Variable Equals ChannelArrow Variable
+                  ;
+            
+
 
 assignment          : auto_type_assignment
-                    | Variable ChannelArrow factor
                     | Variable Equals express
                     | Variable Equals inline_call_block
                     | Var Variable Variable
                     | Var Variable Variable Equals express
                     | Var Variable Variable Equals object_field
                     | Var Variable Variable Equals inline_call_block
-                    | Var Variable Variable Equals ChannelArrow Variable
+                    | channel_assignment
                     | Const Variable Variable Equals express
                     | Const Variable Variable Equals object_field
                     | Const Variable Variable Equals inline_call_block
@@ -329,6 +329,8 @@ assignment          : auto_type_assignment
                     | Var Variable array_index Variable Equals inline_call_block
                     | Variable array_index Equals express
                     | Var Variable Variable Equals Variable array_index
+                    | Variable Plus Plus
+                    | Variable Minus Minus
                     ;
 
 array_index         :   OpenSquareBracket express ClosingSquareBracket
@@ -350,12 +352,13 @@ factor_value        :   value Colon  value
                     ;
 
 value               : OctInt
-                    |DecInt
+                    | DecInt
                     | HexInt
                     | BinInt
                     | DecFloat
                     | HexFloat
                     | String
+                    | inline_call_block
                     ;
                     
 auto_type_assignment:variable_list Colon  Equals express
@@ -407,11 +410,6 @@ expression          : factor
                     ;
 
 
-factor              : object_field
-                    | DecInt
-                    | express
-                    ;
-
 express             : term
                     | express Plus  term
                     | express Minus  term
@@ -426,6 +424,7 @@ term                : factor
 
 factor              : value
                     | OpenBracket express ClosingBracket
+                    | object_field
                     | Plus DecInt %prec UNARY
                     | Plus OctInt %prec UNARY
                     | Plus HexInt %prec UNARY
@@ -447,8 +446,20 @@ object_field        : Variable
                     ;
 
 
-switch_block        : Switch condition OpenCurlyBracket switch_body ClosingCurlyBracket
+switch_block        : Switch multi_switch_condition_body OpenCurlyBracket switch_body ClosingCurlyBracket
+                    | Switch auto_type_assignment OpenCurlyBracket switch_body ClosingCurlyBracket
+                    | Switch OpenCurlyBracket switch_body ClosingCurlyBracket
                     ;
+
+
+multi_switch_condition_body :   multi_switch_condition
+                            |   multi_switch_condition_body ';' multi_switch_condition
+                            |   multi_switch_condition_body ',' multi_switch_condition
+                            ;
+        
+multi_switch_condition      :   condition
+                            |   assignment
+                            ;
 
 
 switch_body         : case_block
@@ -469,6 +480,9 @@ switch_code_block   : inline_call_block
 case_block          : Case expression Colon OpenCurlyBracket func_body ClosingCurlyBracket
                     | Case expression Colon switch_code_block case_block
                     | Case expression Colon switch_code_block
+                    | Case condition Colon OpenCurlyBracket func_body ClosingCurlyBracket
+                    | Case condition Colon switch_code_block case_block
+                    | Case condition Colon switch_code_block
                     | Default Colon OpenCurlyBracket func_body ClosingCurlyBracket
                     | Default Colon switch_code_block
                     ;
@@ -485,9 +499,29 @@ defer_block         : Defer inline_call_block
                     | Defer anon_func_block
                     ;
 
-select_block        : Select OpenCurlyBracket switch_body ClosingCurlyBracket
-                    | String
-                    | object_field
+select_block        : Select OpenCurlyBracket select_body ClosingCurlyBracket
+                    ;
+
+
+select_body         : select_case_block
+                    | select_body select_case_block
+                    ;
+
+select_code_block   : inline_call_block
+                    | return_block
+                    | assignment
+                    | if_block
+                    | for_block
+                    | Break
+                    | Continue
+                    | switch_block
+                    | select_case_block
+                    ;
+
+select_case_block   : Case channel_assignment Colon OpenCurlyBracket func_body ClosingCurlyBracket
+                    | Case channel_assignment Colon switch_code_block select_case_block
+                    | Case channel_assignment Colon OpenCurlyBracket func_body ClosingCurlyBracket select_case_block
+                    | Case channel_assignment Colon switch_code_block
                     ;
 %%
 
