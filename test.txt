@@ -2,10 +2,302 @@ package main
 
 import ("fmt";"os")
 
+const n = 500000000
+const d = 3e20 / n
+const s string = "constant"
 
 func main(main uibr) {
 
     if x + 123 < 100 || x > 1 && x || bebra {
         return 0
+
+	m := make(map[string]int)
+
+	m["k1"] = 7
+	m["k2"] = 13
+
+	fmt.Println("map:", m)
+
+	v1 := m["k1"]
+	fmt.Println("v1:", v1)
+
+	v3 := m["k3"]
+	fmt.Println("v3:", v3)
+
+	fmt.Println("len:", len(maac(ccm(d,d,s))))
+
+	delete(m, "k2")
+	fmt.Println("map:", m)
+
+	clear(m)
+	fmt.Println("map:", m)
+
+	_, prs := m["k2"]
+	fmt.Println("prs:", prs)
+
+	n := map[string]int{"foo": 1, "bar": 2}
+
+	fmt.Println("map:", n)
+
+	n2 := map[string]int{"foo": 1, "bar": 2}
+	if maps.Equal(n, n2) {
+		fmt.Println("n == n2")
+	}
+
+
+	cdsc = 4 - 1
+
+	var arr [3]int
+	var arr [3 + 1]int
+	var arr [skmcsk]int
+	var arr [12 / 3]int
+
+	var arr [3]int= {"mcdmc", 0b010101, 0x32332, 0}
+
+	var arr [...]int= {"mcdmc", 0b010101, 0x32332,0}
+
+ 	const n = 500000000
+    const d = 3e20 / n
+ 	const s string = "constant"
+
+	return 12
+	return 12.34
+	return 12_12_3
+	return 12.21_1_33
+	return 0o7
+
+	defer f("goroutine")
+	// mscdkncskcskn
+	messages <- "buffered"
+    messages <- "channel"
+	return smkcdkm
+	messages <- "buffered"
+	switch os := runtime.GOOS; os{
+		case a:
+			return da
+		case a+b:
+			return net
+	}
+	messages <- "buffered"
+        switch t := i.cjndkcj {
+        case bool :{
+			return a
+		}       
+        case int:
+            fmt.Println("I'm an int")
+        default:
+            fmt.Printf("Don't know type %T\n", t)
+        }
+
+		    switch i {
+    case 1:
+        fmt.Println("one")
+    case 2:
+        fmt.Println("two")
+    case 3:
+        fmt.Println("three")
+    }
+
+	    switch {
+    case t.Hour() < 12:
+        fmt.Println("It's before noon")
+    default:
+        fmt.Println("It's after noon")
+    }
+
+
+
+
+	select 
+	{
+        case msg1 <-c1:
+            fmt.Println("received zalupz \n mxkmdckm", msg1)
+        case msg2 <-c2:
+            fmt.Println("received", msg2)
+        }
+
+
+    switch i {
+    case 1:
+        fmt.Println("one")
+    case 2:
+        fmt.Println("two")
+    case 3:
+        fmt.Println()
+    }
+
+	
+    defer func() {
+        fmt.Println()
+    }()
+
+	defer func(mxsk skc) {
+        fmt.Println()
+    }("smmcsl")
+
+	go f("goroutine")
+
+
+    go func() {
+        fmt.Println()
+    }()
+
+	go func(mxsk skc) {
+        fmt.Println()
+    }("smmcsl")
+
+
+
+	switch os {
+	case "darwin":
+		fmt.Println()
+	default:
+		fmt.Println(os)
+	case "linux":
+		{
+			cddcscd(ecd)
+			cddcscd(ecd)
+			cddcscd(ecd)
+			cddcscd(ecd)
+		}
+	}
+
+	a := cmco.fffd(ksocm)
+	a := 12 + 33
+	v := a+v
+	v := "ceec"
+	v := "ceec" + "cocmoecmefoeoef"
+
+	a := 1231 + "cdcddcdc"
+
+	a:= 12
+
+
+	for i{
+		a:=133
+	}
+
+
+
+	fmt.cece.Println(int, a, int, b)
+	fmt.cece.Println(vised, uint)
+
+	fdm.wdwd("ckckkc")
+
+	fmt.cece.Println(vised, "uint")
+	fmt.cece.Println("vised", uint)
+	fmt.cece.Println("vised", uint)
+	fmt.cece.Println("vised", "uint")
+
+	fmt.cece.Println(vised)
+
+	fmt.cece.Println(vised.dcsnc)
+	fmt.cece.Println(vised.dcsnc.Field)
+
+	fmt.cece.Println(Dised)
+	
+	fmt.cece.Println("ncncdin")
+	return 0
+}
+
+func a() int{
+	return 1_22
+}
+
+func b() int, long{
+	if a>=12 && b<2{
+		return -123
+	} else if a{
+		return -0
+	}
+	else{
+		return 12_12_12
+	}
+	return a
+}
+
+func main() {
+
+    if 7%2 == 0 {
+		return accs
+    } 
+	else {
+		return aed
+    }
+
+    if 8%4 == 0 {
+		return aed
+    }
+
+    if 8%2 == 0 || 7%2 == 0 {
+		return aed
+    }
+
+    if num < 0 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else if num < 10 {
+		return aed
+    } else {
+		return aed
+    }
+
+	if num < 0 {
+		return aed
+    } else if num < 10 {
+		return aed
     }
 }
+
+/*
+func main() {
+
+    i := 1
+    for i % 3 {
+        fmt.Println("Test of new linews!")
+        i = i + 1
+    }
+
+    for j % 0; j < 3; j {
+        fmt.Println(j)
+    }
+
+    for i := range 3 {
+        return a
+    }
+
+    for {
+        fmt.Println("loop")
+        break
+    }
+
+    for n := range 6 {
+        if n%2 == 0 {
+            continue
+        }
+        fmt.Println(n)
+    }
+}
+    x := 123
+    x = 123
+    x = 123 + 123
+    return 0b100
+    var x int
+}
+
+*/

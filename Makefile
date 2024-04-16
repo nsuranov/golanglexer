@@ -9,5 +9,3 @@ yacc.tab.c: yacc.y
 
 clean:
 	rm lng lex.yy.c yacc.tab.c yacc.tab.h
-
-

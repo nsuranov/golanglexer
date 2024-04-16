@@ -28,6 +28,9 @@
 %token Const
 %token Var
 %token Map
+
+%token Make
+
 %token Type
 %token Struct
 %token Interface
@@ -100,7 +103,6 @@ default_block       : type_block
                     | Func func_block
                     ;
 
-
 type_block          : Type Variable Struct OpenCurlyBracket ClosingCurlyBracket
                     | Type Variable Struct OpenCurlyBracket struct_fields_list ClosingCurlyBracket
                     | Type Variable Interface OpenCurlyBracket ClosingCurlyBracket
@@ -122,6 +124,7 @@ package_block       : Package Variable
                     ;
 
 
+
 import_block        : Import factor
                     | Import OpenBracket import_list ClosingBracket
                     ;  
@@ -131,7 +134,6 @@ import_list         : factor
                     | import_list ';' factor
                     | import_list factor
                     ;
-
 
 func_head           : Variable OpenBracket ClosingBracket
                     | Variable OpenBracket args ClosingBracket
@@ -165,6 +167,13 @@ code_block          : inline_call_block
                     | gorutine_block
                     | defer_block
                     | select_block
+variable_list       :   Variable
+                    |   value
+                    |   inline_call_block
+                    |   Variable '.' variable_list
+                    |   variable_list ',' Variable
+                    |   variable_list ',' string_block
+                    |   variable_list ',' inline_call_block
                     ;
 
 
@@ -225,9 +234,133 @@ condition           : condition StatementAnd condition
                     | condition Less Equals condition
                     | OpenBracket condition ClosingBracket
                     | expression
+                    
+switch_block        : Switch multi_cond '{' switch_body '}'
+                    | Switch cond'{' switch_body '}'
+                    | Switch '{' switch_body '}'
+                    ;
+switch_body     :   case_block
+                |   switch_body case_block
+                ;
+
+switch_code_multiblock  :   switch_code_block
+                        |   switch_code_multiblock switch_code_block
+                        ;   
+
+switch_code_block       :   inline_call_block
+                        |   return_block
+                        |   assignment
+                        |   if_block
+                        |   for_block
+                        |   Break
+                        |   Continue
+                        |   switch_block
+                        |   case_block
+                        ;
+
+case_block              :   Case Variable ':' switch_code_block 
+                        |   Case Variable ':' '{' switch_code_multiblock '}'
+                        |   Case express ':' switch_code_block 
+                        |   Case express ':' '{' switch_code_multiblock '}'
+                        |   Default ':' '{' switch_code_multiblock '}'
+                        |   Default ':' switch_code_block
+                        ;
+
+anon_func_block         :   Func '(' args ')' '{' func_body '}' '(' variable_list ')'
+                        |   Func '('  ')' '{' func_body '}' '(' ')'
+                        ;
+
+gorutine_block          :   Go inline_call_block
+                        |   Go anon_func_block
+                        ;
+
+defer_block             :   Defer inline_call_block
+                        |   Defer anon_func_block
+                        ;
+
+select_block        : Select '{' switch_body '}'
+                    ;
+
+multi_cond          :   cond
+                    |   multi_cond ';' cond
+                    |   multi_cond ',' cond
+                    |   auto_type_assignment
                     ;
 
 
+cond                : express
+                    | inline_call_block
+                    | cond '<''-' express
+                    | cond '&''&' express
+                    | cond '|''|' express
+                    | cond '!''=' express
+                    | cond '=''=' express
+                    | cond '>' express
+                    | cond '<' express
+                    | cond '>''=' express
+                    | cond '<''=' express
+                    ;
+
+
+assignment          : auto_type_assignment
+                    | Variable '<''-' factor
+                    | Variable '=' express
+                    | Variable '=' inline_call_block
+                    | Var Variable Variable
+                    | Var Variable Variable '=' express
+                    | Var Variable Variable '=' object_field
+                    | Var Variable Variable '=' inline_call_block
+                    | Var Variable Variable '=''<''-' Variable
+                    | Const Variable Variable '=' express
+                    | Const Variable Variable '=' object_field
+                    | Const Variable Variable '=' inline_call_block
+                    | Const Variable '=' express
+                    | Const Variable '=' object_field
+                    | Const Variable '=' inline_call_block
+                    | Var Variable array_index Variable
+                    | Var Variable array_index Variable '=' array_assignment
+                    | Var Variable array_index Variable '=' object_field
+                    | Var Variable array_index Variable '=' inline_call_block
+                    | Var Variable array_index Variable '=' inline_call_block
+                    | Variable array_index '='express
+                    | Var Variable Variable '=' Variable array_index
+                    ;
+
+array_index         :   '[' express ']'
+                    |   '[' '.''.''.' ']'
+                    |   '[' string_block ']'
+                    |   '[' ']'
+                    ;
+
+array_assignment    :   '{' factor_list '}'
+                    |
+                    ;
+
+factor_list         :   factor_value   
+                    |   factor_list','factor_value
+                    ;
+
+factor_value        :   value ':'value
+                    |   value
+                    ;
+                    
+auto_type_assignment:variable_list ':''=' express
+                    |variable_list ':''=' object_field
+                    | variable_list ':''=' Range express
+                    | variable_list ':''=' inline_call_block
+                    | variable_list ':''=''<''-' Variable
+                    | variable_list ':' '=' Variable array_index
+                    | variable_list ':' '=' Variable array_index
+                    | variable_list ':' '=' dif_assigment_obj
+                    | variable_list ':' '=' Map array_index Variable array_assignment
+                    | variable_list ':' '=' Make '(' Map array_index Variable ')'
+
+                    ;
+
+dif_assigment_obj   :   object_field
+                    |   dif_assigment_obj array_index
+                    |   dif_assigment_obj inline_call_block
+                    ;
 assignment          : Variable Colon Equals expression
                     | Variable Colon Equals object_field
                     | Variable Colon Equals Range expression
@@ -262,6 +395,25 @@ expression          : factor
 
 factor              : object_field
                     | DecInt
+express             : term
+                    | express '+' term
+                    | express '-' term
+                    | express '*' term
+                    | express '/' term
+                    | express '%' term
+                    ;
+
+term                : factor
+                    ;
+
+object_field        : Variable
+                    | Variable '.' object_field
+                    ;
+
+
+factor              : value
+                    | '!' factor
+                    | '(' express ')'
                     | OctInt
                     | HexInt
                     | BinInt
@@ -328,8 +480,9 @@ defer_block         : Defer inline_call_block
                     ;
 
 select_block        : Select OpenCurlyBracket switch_body ClosingCurlyBracket
+                    | string_block
+                    | object_field
                     ;
-
 %%
 
 int main(){

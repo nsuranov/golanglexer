@@ -27,6 +27,7 @@
 "const"                 return Const;
 "var"                   return Var;
 "map"                   return Map;
+"make"                  return Make;
 
 "type"                  return Type;
 "struct"                return Struct;
@@ -85,8 +86,6 @@
 ["'`;.,~]                       return yytext[0];
 [[:space:]]+                    ;
 .                               error(*yytext);
-
-
 
 %%
 
