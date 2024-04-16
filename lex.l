@@ -25,6 +25,7 @@
 "const"                 return Const;
 "var"                   return Var;
 "map"                   return Map;
+"make"                  return Make;
 
 "type"                  return Type;
 "struct"                return Struct;
@@ -50,8 +51,8 @@
 (([+-]?[0-9]+(_?[0-9]+)*\.[0-9]*)|([+-]?[0-9]*\.[0-9]+(_?[0-9]+)*))([eE][-+]?[0-9]+(_?[0-9]+)*)? return DecFloat;
 (([+-]?0[xX](_?[0-9a-fA-F]+)+\.[0-9a-fA-F]*)|([+-]?0[xX][0-9a-fA-F]*\.(_?[0-9a-fA-F]+)+))([pP][-+]?[0-9]+(_?[0-9]+)*) return HexFloat;
 
-"//".*                                    { /* DO NOTHING */ }
-[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }
+"//".*                                    { }
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { }
 
 
 [_a-zA-Z][_a-zA-Z0-9]*  return Variable;

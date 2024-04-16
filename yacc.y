@@ -28,6 +28,9 @@
 %token Const
 %token Var
 %token Map
+
+%token Make
+
 %token Type
 %token Struct
 %token Interface
@@ -149,10 +152,12 @@ arg                :   Variable Variable
 
 
 variable_list       :   Variable
-                    |   string_block
+                    |   value
+                    |   inline_call_block
                     |   Variable '.' variable_list
                     |   variable_list ',' Variable
                     |   variable_list ',' string_block
+                    |   variable_list ',' inline_call_block
                     ;
 
 string_block        :   String
@@ -202,8 +207,8 @@ switch_code_block       :   inline_call_block
 
 case_block              :   Case Variable ':' switch_code_block 
                         |   Case Variable ':' '{' switch_code_multiblock '}'
-                        |   Case multi_cond ':' switch_code_block 
-                        |   Case multi_cond ':' '{' switch_code_multiblock '}'
+                        |   Case express ':' switch_code_block 
+                        |   Case express ':' '{' switch_code_multiblock '}'
                         |   Default ':' '{' switch_code_multiblock '}'
                         |   Default ':' switch_code_block
                         ;
@@ -263,24 +268,44 @@ assignment          : auto_type_assignment
                     | Var Variable array_index Variable '=' array_assignment
                     | Var Variable array_index Variable '=' object_field
                     | Var Variable array_index Variable '=' inline_call_block
+                    | Var Variable array_index Variable '=' inline_call_block
+                    | Variable array_index '='express
+                    | Var Variable Variable '=' Variable array_index
                     ;
 
 array_index         :   '[' express ']'
                     |   '[' '.''.''.' ']'
+                    |   '[' string_block ']'
                     |   '[' ']'
                     ;
 
 array_assignment    :   '{' factor_list '}'
+                    |
+                    ;
 
-factor_list         :   value   
-                    |   factor_list','value
+factor_list         :   factor_value   
+                    |   factor_list','factor_value
+                    ;
+
+factor_value        :   value ':'value
+                    |   value
                     ;
                     
-auto_type_assignment:Variable ':''=' express
-                    |Variable ':''=' object_field
-                    | Variable ':''=' Range express
-                    | Variable ':''=' inline_call_block
-                    | Variable ':''=''<''-' Variable
+auto_type_assignment:variable_list ':''=' express
+                    |variable_list ':''=' object_field
+                    | variable_list ':''=' Range express
+                    | variable_list ':''=' inline_call_block
+                    | variable_list ':''=''<''-' Variable
+                    | variable_list ':' '=' Variable array_index
+                    | variable_list ':' '=' Variable array_index
+                    | variable_list ':' '=' dif_assigment_obj
+                    | variable_list ':' '=' Map array_index Variable array_assignment
+                    | variable_list ':' '=' Make '(' Map array_index Variable ')'
+                    ;
+
+dif_assigment_obj   :   object_field
+                    |   dif_assigment_obj array_index
+                    |   dif_assigment_obj inline_call_block
                     ;
 
 express             : term
