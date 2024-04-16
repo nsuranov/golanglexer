@@ -100,6 +100,7 @@ program             : default_block
 
 
 default_block       : type_block
+                    | assignment
                     | Func func_block
                     ;
 
@@ -167,6 +168,8 @@ code_block          : inline_call_block
                     | gorutine_block
                     | defer_block
                     | select_block
+                    ;
+
 variable_list       :   Variable
                     |   value
                     |   inline_call_block
@@ -198,7 +201,6 @@ arg                 : Variable Variable
 
 variable_list       : factor
                     | Variable '.' variable_list
-                    | variable_list ',' Variable
                     | variable_list ',' factor
                     ;
 
@@ -234,10 +236,12 @@ condition           : condition StatementAnd condition
                     | condition Less Equals condition
                     | OpenBracket condition ClosingBracket
                     | expression
+
+                    /*
                     
-switch_block        : Switch multi_cond '{' switch_body '}'
-                    | Switch cond'{' switch_body '}'
-                    | Switch '{' switch_body '}'
+switch_block        : Switch multi_cond OpenCurlyBracket switch_body ClosingCurlyBracket
+                    | Switch cond OpenCurlyBracket switch_body ClosingCurlyBracket
+                    | Switch OpenCurlyBracket switch_body ClosingCurlyBracket
                     ;
 switch_body     :   case_block
                 |   switch_body case_block
@@ -258,16 +262,16 @@ switch_code_block       :   inline_call_block
                         |   case_block
                         ;
 
-case_block              :   Case Variable ':' switch_code_block 
-                        |   Case Variable ':' '{' switch_code_multiblock '}'
-                        |   Case express ':' switch_code_block 
-                        |   Case express ':' '{' switch_code_multiblock '}'
-                        |   Default ':' '{' switch_code_multiblock '}'
-                        |   Default ':' switch_code_block
+case_block              :   Case Variable Colon   switch_code_block 
+                        |   Case Variable Colon   OpenCurlyBracket switch_code_multiblock ClosingCurlyBracket
+                        |   Case express Colon   switch_code_block 
+                        |   Case express Colon   OpenCurlyBracket switch_code_multiblock ClosingCurlyBracket
+                        |   Default Colon   OpenCurlyBracket switch_code_multiblock ClosingCurlyBracket
+                        |   Default Colon   switch_code_block
                         ;
 
-anon_func_block         :   Func '(' args ')' '{' func_body '}' '(' variable_list ')'
-                        |   Func '('  ')' '{' func_body '}' '(' ')'
+anon_func_block         :   Func OpenBracket args ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket variable_list ClosingBracket
+                        |   Func OpenBracket  ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket ClosingBracket
                         ;
 
 gorutine_block          :   Go inline_call_block
@@ -278,8 +282,10 @@ defer_block             :   Defer inline_call_block
                         |   Defer anon_func_block
                         ;
 
-select_block        : Select '{' switch_body '}'
+select_block        : Select OpenCurlyBracket switch_body ClosingCurlyBracket
                     ;
+
+*/
 
 multi_cond          :   cond
                     |   multi_cond ';' cond
@@ -290,49 +296,48 @@ multi_cond          :   cond
 
 cond                : express
                     | inline_call_block
-                    | cond '<''-' express
-                    | cond '&''&' express
-                    | cond '|''|' express
-                    | cond '!''=' express
-                    | cond '=''=' express
-                    | cond '>' express
-                    | cond '<' express
-                    | cond '>''=' express
-                    | cond '<''=' express
+                    | cond ChannelArrow express
+                    | cond StatementAnd express
+                    | cond StatementOr express
+                    | cond Not Equals express
+                    | cond Equals Equals express
+                    | cond More express
+                    | cond Less express
+                    | cond More Equals express
+                    | cond Less Equals express
                     ;
 
 
 assignment          : auto_type_assignment
-                    | Variable '<''-' factor
-                    | Variable '=' express
-                    | Variable '=' inline_call_block
+                    | Variable ChannelArrow factor
+                    | Variable Equals express
+                    | Variable Equals inline_call_block
                     | Var Variable Variable
-                    | Var Variable Variable '=' express
-                    | Var Variable Variable '=' object_field
-                    | Var Variable Variable '=' inline_call_block
-                    | Var Variable Variable '=''<''-' Variable
-                    | Const Variable Variable '=' express
-                    | Const Variable Variable '=' object_field
-                    | Const Variable Variable '=' inline_call_block
-                    | Const Variable '=' express
-                    | Const Variable '=' object_field
-                    | Const Variable '=' inline_call_block
+                    | Var Variable Variable Equals express
+                    | Var Variable Variable Equals object_field
+                    | Var Variable Variable Equals inline_call_block
+                    | Var Variable Variable Equals ChannelArrow Variable
+                    | Const Variable Variable Equals express
+                    | Const Variable Variable Equals object_field
+                    | Const Variable Variable Equals inline_call_block
+                    | Const Variable Equals express
+                    | Const Variable Equals object_field
+                    | Const Variable Equals inline_call_block
                     | Var Variable array_index Variable
-                    | Var Variable array_index Variable '=' array_assignment
-                    | Var Variable array_index Variable '=' object_field
-                    | Var Variable array_index Variable '=' inline_call_block
-                    | Var Variable array_index Variable '=' inline_call_block
-                    | Variable array_index '='express
-                    | Var Variable Variable '=' Variable array_index
+                    | Var Variable array_index Variable Equals array_assignment
+                    | Var Variable array_index Variable Equals object_field
+                    | Var Variable array_index Variable Equals inline_call_block
+                    | Variable array_index Equals express
+                    | Var Variable Variable Equals Variable array_index
                     ;
 
-array_index         :   '[' express ']'
-                    |   '[' '.''.''.' ']'
-                    |   '[' String ']'
-                    |   '[' ']'
+array_index         :   OpenSquareBracket express ClosingSquareBracket
+                    |   OpenSquareBracket '.''.''.' ClosingSquareBracket
+                    |   OpenSquareBracket String ClosingSquareBracket
+                    |   OpenSquareBracket ClosingSquareBracket
                     ;
 
-array_assignment    :   '{' factor_list '}'
+array_assignment    :   OpenCurlyBracket factor_list ClosingCurlyBracket
                     |
                     ;
 
@@ -340,27 +345,36 @@ factor_list         :   factor_value
                     |   factor_list','factor_value
                     ;
 
-factor_value        :   value ':'value
+factor_value        :   value Colon  value
                     |   value
                     ;
-                    
-auto_type_assignment:variable_list ':''=' express
-                    |variable_list ':''=' object_field
-                    | variable_list ':''=' Range express
-                    | variable_list ':''=' inline_call_block
-                    | variable_list ':''=''<''-' Variable
-                    | variable_list ':' '=' Variable array_index
-                    | variable_list ':' '=' Variable array_index
-                    | variable_list ':' '=' dif_assigment_obj
-                    | variable_list ':' '=' Map array_index Variable array_assignment
-                    | variable_list ':' '=' Make '(' Map array_index Variable ')'
 
+value               : OctInt
+                    |DecInt
+                    | HexInt
+                    | BinInt
+                    | DecFloat
+                    | HexFloat
+                    | String
+                    ;
+                    
+auto_type_assignment:variable_list Colon  Equals express
+                    |variable_list Colon  Equals object_field
+                    | variable_list Colon  Equals Range express
+                    | variable_list Colon  Equals inline_call_block
+                    | variable_list Colon  Equals ChannelArrow Variable
+                    | variable_list Colon   Equals Variable array_index
+                    | variable_list Colon   Equals dif_assigment_obj
+                    | variable_list Colon   Equals Map array_index Variable array_assignment
+                    | variable_list Colon   Equals Make OpenBracket Map array_index Variable ClosingBracket
+                    | variable_list Colon   Equals  Variable array_assignment
                     ;
 
 dif_assigment_obj   :   object_field
                     |   dif_assigment_obj array_index
                     |   dif_assigment_obj inline_call_block
                     ;
+/* Одна из версий не нужна, вроде эта, но лучше не удалять
 assignment          : Variable Colon Equals expression
                     | Variable Colon Equals object_field
                     | Variable Colon Equals Range expression
@@ -378,7 +392,7 @@ assignment          : Variable Colon Equals expression
                     | Variable Plus Plus
                     | Variable Minus Minus
                     ;
-
+*/
 
 expression          : factor
                     | expression Plus expression 
@@ -395,34 +409,23 @@ expression          : factor
 
 factor              : object_field
                     | DecInt
+                    | express
+                    ;
+
 express             : term
-                    | express '+' term
-                    | express '-' term
-                    | express '*' term
-                    | express '/' term
-                    | express '%' term
+                    | express Plus  term
+                    | express Minus  term
+                    | express Times   term
+                    | express Devides    term
+                    | express Mod  term
                     ;
 
 term                : factor
                     ;
 
-object_field        : Variable
-                    | Variable '.' object_field
-                    ;
-
-
-value              : OctInt
-                    | HexInt
-                    | BinInt
-                    | DecFloat
-                    | HexFloat
-                    | String
-                    ;
-
 
 factor              : value
-                    | '!' factor
-                    | '(' express ')'
+                    | OpenBracket express ClosingBracket
                     | Plus DecInt %prec UNARY
                     | Plus OctInt %prec UNARY
                     | Plus HexInt %prec UNARY
