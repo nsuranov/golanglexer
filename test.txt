@@ -4,8 +4,8 @@ import ("fmt";"os")
 
 
 func main(main uibr) {
-    x++
-    x--
-    x = false
-    x = !x
+
+    if x + 123 < 100 || x > 1 && x || bebra {
+        return 0
+    }
 }

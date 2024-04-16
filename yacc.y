@@ -11,7 +11,7 @@
 	}
 %}
 
-
+%token IFX
 %start program_struct
 
 %token Package
@@ -65,6 +65,9 @@
 %token Mod
 %token And
 %token Or 
+%token StatementOr
+%token StatementAnd;
+%token StatementEquals;
 %token Xor
 %token Not 
 
@@ -75,6 +78,8 @@
 %token OpenSquareBracket
 %token ClosingSquareBracket
 %token ChannelArrow
+%token Less
+%token More
 
 
 %left Plus Minus Times Devides
@@ -106,6 +111,8 @@ type_block          : Type Variable Struct OpenCurlyBracket ClosingCurlyBracket
 struct_fields_list  : Variable Variable
                     | struct_fields_list Variable Variable
                     ;
+
+
 int_body            : func_head
                     | int_body func_head
                     ; 
@@ -134,7 +141,6 @@ func_head           : Variable OpenBracket ClosingBracket
 
 
 func_block          : func_head OpenCurlyBracket func_body ClosingCurlyBracket
-                    | func_head OpenCurlyBracket func_body ClosingCurlyBracket
                     ;
 
 
@@ -181,23 +187,22 @@ arg                 : Variable Variable
                     ;
 
 
-variable_list       : Variable
-                    | factor
+variable_list       : factor
                     | Variable '.' variable_list
                     | variable_list ',' Variable
                     | variable_list ',' factor
                     ;
 
 
-if_block            : If cond OpenCurlyBracket func_body ClosingCurlyBracket
-                    | If cond OpenCurlyBracket func_body ClosingCurlyBracket else_block
-                    | If cond OpenCurlyBracket func_body ClosingCurlyBracket if_else_block
-                    | If cond OpenCurlyBracket func_body ClosingCurlyBracket if_else_block else_block
+if_block            : If condition OpenCurlyBracket func_body ClosingCurlyBracket %prec IFX
+                    | If condition OpenCurlyBracket func_body ClosingCurlyBracket else_block
+                    | If condition OpenCurlyBracket func_body ClosingCurlyBracket if_else_block
+                    | If condition OpenCurlyBracket func_body ClosingCurlyBracket if_else_block else_block
                     ;
 
 
-if_else_block       : Else If cond OpenCurlyBracket func_body ClosingCurlyBracket
-                    | if_else_block Else If cond OpenCurlyBracket func_body ClosingCurlyBracket
+if_else_block       : Else If condition OpenCurlyBracket func_body ClosingCurlyBracket
+                    | if_else_block Else If condition OpenCurlyBracket func_body ClosingCurlyBracket
                     ;
 
 
@@ -205,24 +210,21 @@ else_block          : Else OpenCurlyBracket func_body ClosingCurlyBracket
                     ;
 
 
-for_block           : For cond OpenCurlyBracket func_body ClosingCurlyBracket
+for_block           : For condition OpenCurlyBracket func_body ClosingCurlyBracket
                     | For OpenCurlyBracket func_body ClosingCurlyBracket
-                    | For cond OpenCurlyBracket func_body ClosingCurlyBracket
                     ;
 
 
-cond                : Variable
+condition           : condition StatementAnd condition 
+                    | condition StatementOr condition
+                    | condition StatementEquals condition 
+                    | condition Not Equals condition
+                    | condition More condition
+                    | condition Less condition 
+                    | condition More Equals condition
+                    | condition Less Equals condition
+                    | OpenBracket condition ClosingBracket
                     | expression
-                    | assignment 
-                    | cond And And expression
-                    | cond Or Or expression
-                    | cond Not Equals expression
-                    | cond Equals Equals expression
-                    | cond '>' expression
-                    | cond '<' expression
-                    | cond '>' Equals expression
-                    | cond '<' Equals expression
-                    | cond ';' expression
                     ;
 
 
@@ -231,7 +233,7 @@ assignment          : Variable Colon Equals expression
                     | Variable Colon Equals Range expression
                     | Variable Colon Equals inline_call_block
                     | Variable Colon Equals ChannelArrow Variable
-                    | Variable ChannelArrow factor
+                    | Variable ChannelArrow expression
                     | Variable Equals expression
                     | Variable Equals object_field
                     | Variable Equals inline_call_block
@@ -287,8 +289,7 @@ object_field        : Variable
                     ;
 
 
-switch_block        : Switch cond OpenCurlyBracket switch_body ClosingCurlyBracket
-                    | Switch cond OpenCurlyBracket switch_body ClosingCurlyBracket
+switch_block        : Switch condition OpenCurlyBracket switch_body ClosingCurlyBracket
                     ;
 
 
@@ -307,15 +308,15 @@ switch_code_block   : inline_call_block
                     | case_block
                     ;
 
-case_block          : Case cond Colon OpenCurlyBracket func_body ClosingCurlyBracket
-                    | Case cond Colon switch_code_block case_block
-                    | Case cond Colon switch_code_block
+case_block          : Case expression Colon OpenCurlyBracket func_body ClosingCurlyBracket
+                    | Case expression Colon switch_code_block case_block
+                    | Case expression Colon switch_code_block
                     | Default Colon OpenCurlyBracket func_body ClosingCurlyBracket
                     | Default Colon switch_code_block
                     ;
 
 anon_func_block     : Func OpenBracket args ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket variable_list ClosingBracket
-                    | Func OpenBracket  ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket ClosingBracket
+                    | Func OpenBracket ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket ClosingBracket
                     ;
 
 gorutine_block      : Go inline_call_block

@@ -52,17 +52,22 @@
 \*                      return Times; 
 \/                      return Devides; 
 \%                      return Mod; 
-\&                      return And; 
-\|                      return Or; 
+\&                      return And;
+"||"                    return StatementOr;
+"&&"                    return StatementAnd;
+"=="                    return StatementEquals;
+\|                      return Or;
 \^                      return Xor; 
 \!                      return Not; 
-\(                      return OpenBracket; 
+\(                      return OpenBracket;
 \)                      return ClosingBracket; 
-\{                      return OpenCurlyBracket; 
+\{                      return OpenCurlyBracket;
 \}                      return ClosingCurlyBracket; 
 \[                      return OpenSquareBracket; 
 \]                      return ClosingSquareBracket; 
 "<-"                    return ChannelArrow;
+\<                      return Less;
+\>                      return More;
 
 [[:alpha:]_][[:alnum:]_]*        return Variable;
 
@@ -73,11 +78,11 @@
 (([0-9]+(_?[0-9]+)*\.[0-9]*)|([0-9]*\.[0-9]+(_?[0-9]+)*))([eE][-+]?[0-9]+(_?[0-9]+)*)? return DecFloat;
 ((0[xX](_?[0-9a-fA-F]+)+\.[0-9a-fA-F]*)|(0[xX][0-9a-fA-F]*\.(_?[0-9a-fA-F]+)+))([pP][-+]?[0-9]+(_?[0-9]+)*) return HexFloat;
 
-"//".*                                    { /* DO NOTHING */ }
-[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { /* DO NOTHING */ }
+"//".*
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
 \"(\\.|[^"\\])*\"               return String;
-[><"'`;.,~]                 return yytext[0]; 
+["'`;.,~]                       return yytext[0];
 [[:space:]]+                    ;
 .                               error(*yytext);
 
