@@ -172,7 +172,7 @@ variable_list       :   Variable
                     |   inline_call_block
                     |   Variable '.' variable_list
                     |   variable_list ',' Variable
-                    |   variable_list ',' string_block
+                    |   variable_list ',' String
                     |   variable_list ',' inline_call_block
                     ;
 
@@ -328,7 +328,7 @@ assignment          : auto_type_assignment
 
 array_index         :   '[' express ']'
                     |   '[' '.''.''.' ']'
-                    |   '[' string_block ']'
+                    |   '[' String ']'
                     |   '[' ']'
                     ;
 
@@ -411,14 +411,18 @@ object_field        : Variable
                     ;
 
 
-factor              : value
-                    | '!' factor
-                    | '(' express ')'
-                    | OctInt
+value              : OctInt
                     | HexInt
                     | BinInt
                     | DecFloat
                     | HexFloat
+                    | String
+                    ;
+
+
+factor              : value
+                    | '!' factor
+                    | '(' express ')'
                     | Plus DecInt %prec UNARY
                     | Plus OctInt %prec UNARY
                     | Plus HexInt %prec UNARY
@@ -431,7 +435,6 @@ factor              : value
                     | Minus BinInt %prec UNARY
                     | Minus DecFloat %prec UNARY
                     | Minus HexFloat %prec UNARY
-                    | String
                     | Not factor
                     ;
 
@@ -480,7 +483,7 @@ defer_block         : Defer inline_call_block
                     ;
 
 select_block        : Select OpenCurlyBracket switch_body ClosingCurlyBracket
-                    | string_block
+                    | String
                     | object_field
                     ;
 %%
