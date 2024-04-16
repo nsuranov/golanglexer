@@ -15,6 +15,5 @@ func main() {
 
 	x = 123
 	fmt.Print(f)
-
 	fmt.Print(y)
 }

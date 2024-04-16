@@ -8,6 +8,9 @@ const s string = "constant"
 
 func main(main uibr) {
 
+    if x + 123 < 100 || x > 1 && x || bebra {
+        return 0
+
 	m := make(map[string]int)
 
 	m["k1"] = 7
@@ -259,8 +262,8 @@ func main() {
     } else if num < 10 {
 		return aed
     }
-	return aed
 }
+
 /*
 func main() {
 

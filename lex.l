@@ -10,8 +10,10 @@
 %}
 
 %option yylineno
+%option noyywrap
 
 %%
+
 "package"               return Package;
 "import"                return Import;
 "func"                  return Func;
@@ -44,27 +46,47 @@
 "range"                 return Range;
 "for"                   return For;
 
-(([-+]?0)|([-+]?[1-9][0-9]*(_?[0-9]+)*))([eE][-+]?[0-9]+(_?[0-9]+)*)? return DecInt;
-([+-]?0[oO]?(_?[0-7]+)*)([eE][-+]?[0-9]+(_?[0-9]+)*)? return OctInt;
-[+-]?0[bB](_?[01]+)* return BinInt;
-([+-]?0[xX](_?[0-9a-fA-F]+)+)([pP][-+]?[0-9]+(_?[0-9]+)*)? return HexInt;
-(([+-]?[0-9]+(_?[0-9]+)*\.[0-9]*)|([+-]?[0-9]*\.[0-9]+(_?[0-9]+)*))([eE][-+]?[0-9]+(_?[0-9]+)*)? return DecFloat;
-(([+-]?0[xX](_?[0-9a-fA-F]+)+\.[0-9a-fA-F]*)|([+-]?0[xX][0-9a-fA-F]*\.(_?[0-9a-fA-F]+)+))([pP][-+]?[0-9]+(_?[0-9]+)*) return HexFloat;
+\=                      return Equals;
+\:                      return Colon;
+\+                      return Plus; 
+\-                      return Minus; 
+\*                      return Times; 
+\/                      return Devides; 
+\%                      return Mod; 
+\&                      return And;
+"||"                    return StatementOr;
+"&&"                    return StatementAnd;
+"=="                    return StatementEquals;
+\|                      return Or;
+\^                      return Xor; 
+\!                      return Not; 
+\(                      return OpenBracket;
+\)                      return ClosingBracket; 
+\{                      return OpenCurlyBracket;
+\}                      return ClosingCurlyBracket; 
+\[                      return OpenSquareBracket; 
+\]                      return ClosingSquareBracket; 
+"<-"                    return ChannelArrow;
+\<                      return Less;
+\>                      return More;
 
-"//".*                                    { }
-[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]       { }
+[[:alpha:]_][[:alnum:]_]*        return Variable;
 
+((0)|([1-9][0-9]*(_?[0-9]+)*))([eE][-+]?[0-9]+(_?[0-9]+)*)? return DecInt;
+(0[oO]?(_?[0-7]+)*)([eE][-+]?[0-9]+(_?[0-9]+)*)? return OctInt;
+0[bB](_?[01]+)* return BinInt;
+(0[xX](_?[0-9a-fA-F]+)+)([pP][-+]?[0-9]+(_?[0-9]+)*)? return HexInt;
+(([0-9]+(_?[0-9]+)*\.[0-9]*)|([0-9]*\.[0-9]+(_?[0-9]+)*))([eE][-+]?[0-9]+(_?[0-9]+)*)? return DecFloat;
+((0[xX](_?[0-9a-fA-F]+)+\.[0-9a-fA-F]*)|(0[xX][0-9a-fA-F]*\.(_?[0-9a-fA-F]+)+))([pP][-+]?[0-9]+(_?[0-9]+)*) return HexFloat;
 
-[_a-zA-Z][_a-zA-Z0-9]*  return Variable;
+"//".*
+[/][*][^*]*[*]+([^*/][^*]*[*]+)*[/]
 
+\"(\\.|[^"\\])*\"               return String;
+["'`;.,~]                       return yytext[0];
+[[:space:]]+                    ;
+.                               error(*yytext);
 
-\"(\\.|[^"\\])*\"   return String;
-
-[-+\*/%=&|!><()\[\]{}"'`^:;.,~]      return yytext[0];
-
-[ \t\n] ;
-. error(*yytext);
 %%
 
 
-int yywrap (void) {return 1;}
