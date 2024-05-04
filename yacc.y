@@ -11,7 +11,7 @@
 	}
 %}
 
-%token IFX
+%nonassoc IFX
 %start program_struct
 
 %token Package
@@ -73,6 +73,7 @@
 %token StatementEquals;
 %token Xor
 %token Not 
+%token Comma
 
 %token OpenBracket
 %token ClosingBracket
@@ -84,6 +85,9 @@
 %token Less
 %token More
 
+%token StatementNotEquals
+%token DynamicAssignment
+%token Ellipsis
 
 %left Plus Minus Times Devides
 %right UNARY
@@ -104,6 +108,7 @@ default_block               : type_block
                             | Func func_block
                             ;
 
+
 type_block                  : Type Variable Struct OpenCurlyBracket ClosingCurlyBracket
                             | Type Variable Struct OpenCurlyBracket struct_fields_list ClosingCurlyBracket
                             | Type Variable Interface OpenCurlyBracket ClosingCurlyBracket
@@ -111,8 +116,20 @@ type_block                  : Type Variable Struct OpenCurlyBracket ClosingCurly
                             ;
 
 
-struct_fields_list          : Variable Variable
-                            | struct_fields_list Variable Variable
+struct_fields_list          : struct_field
+                            | struct_fields_list struct_field
+                            ;
+
+
+struct_field                : object_field
+                            | object_field Func OpenBracket ClosingBracket
+                            | object_field Func OpenBracket ClosingBracket object_field
+                            | object_field Func OpenBracket args ClosingBracket
+                            | Variable Chan object_field
+                            | Variable Chan Interface OpenCurlyBracket ClosingCurlyBracket
+                            | Variable Chan Struct OpenCurlyBracket ClosingCurlyBracket
+                            | Map array_index Interface OpenCurlyBracket ClosingCurlyBracket
+                            | Map array_index Struct OpenCurlyBracket ClosingCurlyBracket
                             ;
 
 
@@ -136,19 +153,23 @@ import_list                 : factor
                             | import_list factor
                             ;
 
-func_head                   : Variable OpenBracket ClosingBracket
-                            | Variable OpenBracket args ClosingBracket
-                            | Variable OpenBracket ClosingBracket func_return_block
-                            | Variable OpenBracket args ClosingBracket func_return_block
-                            ;
-
 
 func_block                  : func_head OpenCurlyBracket func_body ClosingCurlyBracket
                             ;
 
 
-func_return_block           : Variable
-                            | func_return_block ',' Variable
+func_head                   : Variable OpenBracket ClosingBracket
+                            | Variable OpenBracket args ClosingBracket
+                            | Variable OpenBracket ClosingBracket func_return_block
+                            | Variable OpenBracket args ClosingBracket func_return_block
+                            | Variable OpenBracket ClosingBracket ChannelArrow Chan Struct OpenCurlyBracket ClosingCurlyBracket
+                            | OpenBracket args ClosingBracket func_head
+                            ;
+
+
+func_return_block           : object_field
+                            | Chan object_field
+                            | OpenBracket func_return_block Comma object_field ClosingBracket
                             ;
 
 
@@ -170,39 +191,51 @@ code_block                  : inline_call_block
                             | select_block
                             ;
 
-variable_list               :   Variable
-                            |   value
-                            |   inline_call_block
-                            |   Variable '.' variable_list
-                            |   variable_list ',' Variable
-                            |   variable_list ',' String
-                            |   variable_list ',' inline_call_block
+
+variable_list               : expression
+                            | variable_list Comma expression
                             ;
 
 
-return_block                : Return expression 
+return_block                : Return
+                            | Return variable_list
                             ;
 
 
-inline_call_block           : Variable OpenBracket ClosingBracket
-                            | Variable OpenBracket variable_list ClosingBracket
-                            | Variable '.' inline_call_block
+inline_call_block           : object_field OpenBracket ClosingBracket
+                            | object_field OpenBracket args ClosingBracket
+                            | object_field OpenBracket String ClosingBracket
+                            | object_field OpenBracket String Comma variable_list ClosingBracket
                             ;
 
 
-args                        : arg 
-                            | args ',' arg
+args                        : arg
+                            | args Comma arg 
                             ;      
 
 
-arg                         : Variable Variable
+arg                         : object_field
+                            | factor
+                            | object_field object_field
+                            | object_field Chan object_field
+                            | object_field Chan Struct OpenCurlyBracket ClosingCurlyBracket
+                            | object_field Chan Chan Struct OpenCurlyBracket ClosingCurlyBracket
+                            | object_field Ellipsis object_field
+                            | object_field Ellipsis 
+                            | object_field Ellipsis object_field OpenCurlyBracket ClosingCurlyBracket
+                            | object_field Ellipsis Interface
+                            | object_field Ellipsis Interface OpenCurlyBracket ClosingCurlyBracket
                             ;
 
 
-if_block                    : If condition OpenCurlyBracket func_body ClosingCurlyBracket %prec IFX
+if_block                    : If condition OpenCurlyBracket func_body ClosingCurlyBracket 
                             | If condition OpenCurlyBracket func_body ClosingCurlyBracket else_block
                             | If condition OpenCurlyBracket func_body ClosingCurlyBracket if_else_block
                             | If condition OpenCurlyBracket func_body ClosingCurlyBracket if_else_block else_block
+                            | If object_field OpenCurlyBracket func_body ClosingCurlyBracket 
+                            | If object_field OpenCurlyBracket func_body ClosingCurlyBracket else_block
+                            | If object_field OpenCurlyBracket func_body ClosingCurlyBracket if_else_block
+                            | If object_field OpenCurlyBracket func_body ClosingCurlyBracket if_else_block else_block
                             ;
 
 
@@ -221,115 +254,127 @@ for_block                   : For condition OpenCurlyBracket func_body ClosingCu
                             ;
 
 
-condition                   : condition StatementAnd condition 
-                            | condition StatementOr condition
-                            | condition StatementEquals condition 
-                            | condition Not Equals condition
-                            | condition More condition
-                            | condition Less condition 
-                            | condition More Equals condition
-                            | condition Less Equals condition
+condition                   : expression
+                            | auto_type_assignment ';' condition 
+                            | expression StatementAnd condition 
+                            | expression StatementOr condition
+                            | expression StatementEquals factor
+                            | expression StatementNotEquals factor
+                            | expression StatementEquals factor StatementAnd condition
+                            | expression StatementEquals factor StatementOr condition
+                            | expression StatementNotEquals factor StatementAnd condition
+                            | expression StatementNotEquals factor StatementOr condition
+                            | expression More condition
+                            | expression Less condition 
+                            | expression More Equals condition
+                            | expression Less Equals condition
+                            | Not factor
                             | OpenBracket condition ClosingBracket
-                            | expression
+                            ;
 
 
 channel_assignment          : Variable ChannelArrow expression
                             | Var Variable Variable Equals ChannelArrow Variable
+                            | ChannelArrow expression
+                            | ChannelArrow inline_call_block 
+                            | Variable ChannelArrow Struct OpenCurlyBracket ClosingCurlyBracket OpenCurlyBracket ClosingCurlyBracket 
                             ;
 
 
 assignment                  : auto_type_assignment
-                            | Variable Equals expression
-                            | Variable Equals inline_call_block
+                            | channel_assignment
+                            | object_field Equals expression
                             | Var Variable Variable
                             | Var Variable Variable Equals expression
-                            | Var Variable Variable Equals object_field
-                            | Var Variable Variable Equals inline_call_block
-                            | channel_assignment
                             | Const Variable Variable Equals expression
-                            | Const Variable Variable Equals object_field
-                            | Const Variable Variable Equals inline_call_block
                             | Const Variable Equals expression
-                            | Const Variable Equals object_field
-                            | Const Variable Equals inline_call_block
                             | Var Variable array_index Variable
                             | Var Variable array_index Variable Equals array_assignment
                             | Var Variable array_index Variable Equals object_field
                             | Var Variable array_index Variable Equals inline_call_block
-                            | Variable array_index Equals expression
+                            | Var Variable Chan Struct OpenCurlyBracket ClosingCurlyBracket 
+                            | object_field array_index Equals expression
+                            | object_field array_index Equals Struct OpenCurlyBracket ClosingCurlyBracket OpenCurlyBracket ClosingCurlyBracket 
                             | Var Variable Variable Equals Variable array_index
+                            | object_field Equals Make OpenBracket array_index object_field Comma factor ClosingBracket
+                            | object_field Equals Make OpenBracket array_index object_field Comma factor Comma factor ClosingBracket
+                            | object_field Equals Make OpenBracket Chan Struct OpenCurlyBracket ClosingCurlyBracket ClosingBracket
+                            | object_field Equals Make OpenBracket Chan object_field Comma factor ClosingBracket
+                            | object_field Equals Func OpenBracket args ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket 
+                            | object_field Equals Map array_index Struct OpenCurlyBracket ClosingCurlyBracket OpenCurlyBracket ClosingCurlyBracket 
+                            | variable_list Equals variable_list
+                            | object_field Equals Range object_field
+                            | object_field Equals Variable OpenCurlyBracket variable_list ClosingCurlyBracket
                             | Variable Plus Plus
                             | Variable Minus Minus
                             ;
 
 
-array_index                 :   OpenSquareBracket expression ClosingSquareBracket
-                            |   OpenSquareBracket '.''.''.' ClosingSquareBracket
-                            |   OpenSquareBracket String ClosingSquareBracket
-                            |   OpenSquareBracket ClosingSquareBracket
+array_index                 : OpenSquareBracket expression ClosingSquareBracket
+                            | OpenSquareBracket Ellipsis ClosingSquareBracket
+                            | OpenSquareBracket String ClosingSquareBracket
+                            | OpenSquareBracket ClosingSquareBracket
                             ;
 
 
-array_assignment            :   OpenCurlyBracket factor_list ClosingCurlyBracket
-                            |
+array_assignment            : OpenCurlyBracket factor_list ClosingCurlyBracket
                             ;
 
 
-factor_list                 :   factor_value   
-                            |   factor_list','factor_value
+factor_list                 : object_field Colon expression Comma factor_list
+                            | object_field Colon expression Comma
+                            | object_field Colon expression 
                             ;
 
 
-factor_value                :   value Colon  value
-                            |   value
+auto_type_assignment        : variable_list DynamicAssignment variable_list 
+                            | variable_list DynamicAssignment Range object_field
+                            | variable_list DynamicAssignment inline_call_block
+                            | variable_list DynamicAssignment ChannelArrow Variable
+                            | variable_list DynamicAssignment Variable array_index
+                            | variable_list DynamicAssignment dif_assignment_obj
+                            | variable_list DynamicAssignment Map array_index Variable array_assignment
+                            | variable_list DynamicAssignment Make OpenBracket Map array_index Variable ClosingBracket
+                            | variable_list DynamicAssignment Make OpenBracket Chan object_field ClosingBracket
+                            | variable_list DynamicAssignment Make OpenBracket Chan Chan object_field ClosingBracket
+                            | variable_list DynamicAssignment Make OpenBracket Chan Struct OpenCurlyBracket ClosingCurlyBracket ClosingBracket
+                            | variable_list DynamicAssignment Make OpenBracket Chan Chan Struct OpenCurlyBracket ClosingCurlyBracket ClosingBracket
+                            | variable_list DynamicAssignment Variable array_assignment
+                            | variable_list DynamicAssignment object_field OpenCurlyBracket ClosingCurlyBracket
+                            | variable_list DynamicAssignment object_field OpenCurlyBracket factor_list ClosingCurlyBracket
                             ;
 
 
-value                       : OctInt
+dif_assignment_obj          : object_field
+                            | dif_assignment_obj array_index
+                            | dif_assignment_obj inline_call_block
+                            ;
+
+
+expression                  : factor
+                            | factor Plus expression 
+                            | factor Minus expression
+                            | factor Times expression
+                            | factor Devides expression
+                            | factor Mod expression
+                            | factor And expression
+                            | factor Or expression
+                            | factor Xor expression
+                            | OpenBracket expression ClosingBracket
+                            | object_field OpenCurlyBracket factor_list ClosingCurlyBracket
+                            ;
+
+
+factor                      : object_field
+                            | object_field array_index 
                             | DecInt
+                            | OctInt
                             | HexInt
                             | BinInt
                             | DecFloat
                             | HexFloat
                             | String
                             | inline_call_block
-                            ;
-
-                            
-auto_type_assignment        : variable_list Colon Equals expression
-                            | variable_list Colon Equals object_field
-                            | variable_list Colon Equals Range expression
-                            | variable_list Colon Equals inline_call_block
-                            | variable_list Colon Equals ChannelArrow Variable
-                            | variable_list Colon Equals Variable array_index
-                            | variable_list Colon Equals dif_assigment_obj
-                            | variable_list Colon Equals Map array_index Variable array_assignment
-                            | variable_list Colon Equals Make OpenBracket Map array_index Variable ClosingBracket
-                            | variable_list Colon Equals Variable array_assignment
-                            ;
-
-dif_assigment_obj           : object_field
-                            | dif_assigment_obj array_index
-                            | dif_assigment_obj inline_call_block
-                            ;
-
-
-expression                  : factor
-                            | expression Plus expression 
-                            | expression Minus expression
-                            | expression Times expression
-                            | expression Devides expression
-                            | expression Mod expression
-                            | expression And expression
-                            | expression Or expression
-                            | expression Xor expression
-                            | OpenBracket expression ClosingBracket
-                            ;
-
-
-factor                      : value
-                            | OpenBracket expression ClosingBracket
-                            | object_field
                             | Plus DecInt %prec UNARY
                             | Plus OctInt %prec UNARY
                             | Plus HexInt %prec UNARY
@@ -342,16 +387,20 @@ factor                      : value
                             | Minus BinInt %prec UNARY
                             | Minus DecFloat %prec UNARY
                             | Minus HexFloat %prec UNARY
-                            | Not factor
                             ;
 
 
 object_field                : Variable
+                            | OpenBracket object_field ClosingBracket
+                            | Times object_field %prec UNARY
+                            | And object_field %prec UNARY
                             | Variable '.' object_field
+                            | Not object_field
                             ;
 
 
-switch_block                : Switch multi_switch_condition_body OpenCurlyBracket switch_body ClosingCurlyBracket
+switch_block                : Switch Variable OpenCurlyBracket switch_body ClosingCurlyBracket
+                            | Switch multi_switch_condition_body OpenCurlyBracket switch_body ClosingCurlyBracket
                             | Switch auto_type_assignment OpenCurlyBracket switch_body ClosingCurlyBracket
                             | Switch OpenCurlyBracket switch_body ClosingCurlyBracket
                             ;
@@ -359,7 +408,7 @@ switch_block                : Switch multi_switch_condition_body OpenCurlyBracke
 
 multi_switch_condition_body : multi_switch_condition
                             | multi_switch_condition_body ';' multi_switch_condition
-                            | multi_switch_condition_body ',' multi_switch_condition
+                            | multi_switch_condition_body Comma multi_switch_condition
                             ;
         
 multi_switch_condition      : condition
@@ -379,15 +428,13 @@ switch_code_block           : inline_call_block
                             | Break
                             | Continue
                             | switch_block
-                            | case_block
                             ;
 
-case_block                  : Case expression Colon OpenCurlyBracket func_body ClosingCurlyBracket
-                            | Case expression Colon switch_code_block case_block
-                            | Case expression Colon switch_code_block
-                            | Case condition Colon OpenCurlyBracket func_body ClosingCurlyBracket
+case_block                  : Case condition Colon OpenCurlyBracket func_body ClosingCurlyBracket
                             | Case condition Colon switch_code_block case_block
                             | Case condition Colon switch_code_block
+                            | Case auto_type_assignment Colon switch_code_block
+                            | Case args Colon switch_code_block
                             | Default Colon OpenCurlyBracket func_body ClosingCurlyBracket
                             | Default Colon switch_code_block
                             ;
@@ -412,21 +459,15 @@ select_body                 : select_case_block
                             | select_body select_case_block
                             ;
 
-select_code_block           : inline_call_block
-                            | return_block
-                            | assignment
-                            | if_block
-                            | for_block
-                            | Break
-                            | Continue
-                            | switch_block
-                            | select_case_block
-                            ;
 
 select_case_block           : Case channel_assignment Colon OpenCurlyBracket func_body ClosingCurlyBracket
-                            | Case channel_assignment Colon switch_code_block select_case_block
-                            | Case channel_assignment Colon OpenCurlyBracket func_body ClosingCurlyBracket select_case_block
-                            | Case channel_assignment Colon switch_code_block
+                            | Case channel_assignment Colon switch_code_block func_body 
+                            | Case channel_assignment Colon func_body 
+                            | Case channel_assignment Colon 
+                            | Case auto_type_assignment Colon func_body 
+                            | Case Variable Equals channel_assignment Colon func_body 
+                            | Default Colon OpenCurlyBracket func_body ClosingCurlyBracket
+                            | Default Colon 
                             ;
 %%
 
