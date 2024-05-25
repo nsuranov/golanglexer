@@ -24,7 +24,6 @@
 %token Chan
 %token Select
 
-
 %token Const
 %token Var
 %token Map
@@ -410,6 +409,7 @@ multi_switch_condition_body : multi_switch_condition
                             | multi_switch_condition_body ';' multi_switch_condition
                             | multi_switch_condition_body Comma multi_switch_condition
                             ;
+
         
 multi_switch_condition      : condition
                             | assignment
@@ -419,6 +419,7 @@ multi_switch_condition      : condition
 switch_body                 : case_block
                             | switch_body case_block
                             ;
+
 
 switch_code_block           : inline_call_block
                             | return_block
@@ -430,6 +431,7 @@ switch_code_block           : inline_call_block
                             | switch_block
                             ;
 
+
 case_block                  : Case condition Colon OpenCurlyBracket func_body ClosingCurlyBracket
                             | Case condition Colon switch_code_block case_block
                             | Case condition Colon switch_code_block
@@ -439,17 +441,21 @@ case_block                  : Case condition Colon OpenCurlyBracket func_body Cl
                             | Default Colon switch_code_block
                             ;
 
+
 anon_func_block             : Func OpenBracket args ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket variable_list ClosingBracket
                             | Func OpenBracket ClosingBracket OpenCurlyBracket func_body ClosingCurlyBracket OpenBracket ClosingBracket
                             ;
+
 
 gorutine_block              : Go inline_call_block
                             | Go anon_func_block
                             ;
 
+
 defer_block                 : Defer inline_call_block
                             | Defer anon_func_block
                             ;
+
 
 select_block                : Select OpenCurlyBracket select_body ClosingCurlyBracket
                             ;
@@ -469,6 +475,8 @@ select_case_block           : Case channel_assignment Colon OpenCurlyBracket fun
                             | Default Colon OpenCurlyBracket func_body ClosingCurlyBracket
                             | Default Colon 
                             ;
+
+
 %%
 
 int main(){
